@@ -3,835 +3,531 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vegas Luck Online - Fun Slots!</title>
-    
+    <title>CRASH N' SPIN - Next-Gen Gaming</title>
     <style>
-        /* --- Global Styles & Theme --- */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Staatliches&display=swap');
+        /* --- Font Import --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
+        /* --- CSS Variables (Theme) --- */
         :root {
-            --bg-color: #1a1a1a;
-            --primary-color: #2c2c2c;
-            --accent-color: #ffd700; /* Gold */
-            --text-color: #f0f0f0;
-            --win-color: #4CAF50; /* Green */
-            --lose-color: #F44336; /* Red */
-            --button-color: #007BFF;
+            --bg-dark: #1a1f2c;
+            --bg-light: #232a39;
+            --bg-accent: #30384c;
+            --text-primary: #e1e1e6;
+            --text-secondary: #a8a8b3;
+            --accent-primary: #00ff66; /* Vibrant Green */
+            --accent-red: #ff4757;
+            --accent-yellow: #f1c40f;
+            --border-color: #3e485e;
+        }
+
+        /* --- Base Styles --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
             padding: 20px;
-            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- Main Container --- */
-        .container {
-            background-color: var(--primary-color);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.1);
-            border: 2px solid var(--accent-color);
-            text-align: center;
+        /* --- Main App Layout --- */
+        .app-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
             width: 100%;
-            max-width: 500px;
-        }
-
-        header h1 {
-            font-family: 'Staatliches', cursive;
-            color: var(--accent-color);
-            font-size: 3rem;
-            margin: 0 0 1rem 0;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-            letter-spacing: 2px;
-        }
-
-        /* --- Balance & Messages --- */
-        .balance-info {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: bold;
-        }
-
-        #balance {
-            color: var(--win-color);
-            transition: color 0.3s;
-        }
-
-        #message {
-            font-size: 1.2rem;
-            font-weight: bold;
-            height: 25px;
-            margin: 1rem 0;
-            transition: color 0.3s;
-        }
-
-        .win-message { color: var(--win-color); }
-        .lose-message { color: var(--lose-color); }
-
-        /* --- Slot Machine --- */
-        .slot-machine {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 2rem;
-            padding: 20px;
-            background: #111;
-            border-radius: 10px;
-            border: 1px solid #444;
-        }
-
-        .reel {
-            width: 100px;
-            height: 100px;
-            background-color: #f0f0f0;
-            border: 3px solid #333;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3.5rem;
+            max-width: 1200px;
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
-        .reel.win-highlight {
-            animation: win-pulse 0.8s infinite;
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
         }
         
-        @keyframes win-pulse {
-            0% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 0px var(--accent-color); }
-            50% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 20px var(--accent-color); }
-            100% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 0px var(--accent-color); }
-        }
-
-        /* --- Controls --- */
-        .controls {
+        /* --- Panel Base Styles --- */
+        .panel {
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 1rem;
         }
+
+        /* --- Game Panel (Left Side) --- */
+        .game-panel {
+            background-color: var(--bg-dark);
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .logo span { color: var(--accent-primary); }
         
-        .bet-control {
+        .balance {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.2rem;
+            background-color: var(--bg-light);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 600;
         }
 
-        #bet-amount {
-            width: 80px;
-            padding: 8px;
-            font-size: 1.2rem;
-            text-align: center;
-            border: 2px solid #555;
-            background-color: #333;
-            color: var(--text-color);
-            border-radius: 5px;
-            -moz-appearance: textfield; /* Firefox */
+        .balance svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent-yellow);
         }
-        #bet-amount::-webkit-outer-spin-button,
-        #bet-amount::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        
+        #balance-amount {
+            font-size: 1.1rem;
         }
 
-        .spin-button {
-            font-family: 'Staatliches', cursive;
-            font-size: 2rem;
-            letter-spacing: 1px;
-            padding: 10px 40px;
+        /* Crash Game Visualizer */
+        .crash-container {
+            position: relative;
+            height: 300px;
+            background-color: var(--bg-light);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        #multiplier {
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+            z-index: 2;
+        }
+
+        #game-status {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            z-index: 2;
+            transition: opacity 0.3s ease;
+        }
+        
+        .progress-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-yellow));
+            transition: width 0.1s linear, height 0.3s ease;
+            z-index: 1;
+        }
+        
+        /* Controls Panel */
+        .controls-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        
+        #action-button {
+            grid-column: 1 / -1;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            background: linear-gradient(145deg, #0088ff, #0055cc);
-            color: white;
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            color: var(--bg-dark);
+            background-color: var(--accent-primary);
             transition: all 0.2s ease-in-out;
         }
-
-        .spin-button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.6);
+        
+        #action-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 102, 0.2);
         }
-
-        .spin-button:active:not(:disabled) {
-            transform: translateY(1px);
-        }
-
-        .spin-button:disabled {
-            background: #555;
+        
+        #action-button:disabled {
+            background-color: #555;
             color: #999;
             cursor: not-allowed;
             box-shadow: none;
+            transform: none;
+        }
+
+        #action-button.cashout-btn {
+            background-color: var(--accent-yellow);
         }
         
         #add-funds-button {
-            background: var(--win-color);
+            grid-column: 1 / -1;
+            padding: 10px;
+            background-color: var(--accent-red);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 10px;
-            display: none; /* Initially hidden */
-        }
-
-        /* --- Footer --- */
-        footer {
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: rgba(255, 0, 0, 0.1);
-            border: 1px solid var(--lose-color);
             border-radius: 8px;
-            max-width: 90%;
+            cursor: pointer;
+            display: none;
         }
 
-        footer p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #ddd;
+        /* --- History Panel (Right Side) --- */
+        .history-panel h3 {
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
         }
         
-        footer strong {
-            color: var(--lose-color);
+        #history-list {
+            list-style: none;
+            overflow-y: auto;
+            max-height: 450px;
+            display: flex;
+            flex-direction: column-reverse; /* Newest on top */
         }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 5px;
+            border-bottom: 1px solid var(--bg-accent);
+            font-weight: 500;
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-multiplier.win { color: var(--accent-primary); }
+        .history-multiplier.loss { color: var(--accent-red); }
+        .history-time { font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* --- Disclaimer Footer --- */
+        .disclaimer {
+            grid-column: 1 / -1;
+            padding: 15px 25px;
+            background-color: rgba(255, 71, 87, 0.1);
+            border-top: 1px solid var(--accent-red);
+            font-size: 0.8rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .disclaimer strong { color: var(--accent-red); }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>Vegas Luck Online</h1>
-        </header>
-
-        <main>
-            <p class="balance-info">Your Balance: $<span id="balance">100</span></p>
-
-            <div class="slot-machine">
-                <div class="reel" id="reel1">🍒</div>
-                <div class="reel" id="reel2">🍋</div>
-                <div class="reel" id="reel3">🍊</div>
-            </div>
-
-            <p id="message"></p>
-
-            <div class="controls">
-                 <div class="bet-control">
-                    <label for="bet-amount">Bet Amount:</label>
-                    <input type="number" id="bet-amount" value="5" min="1">
+    <div class="app-container">
+        <!-- GAME PANEL -->
+        <div class="game-panel panel">
+            <header class="header">
+                <div class="logo">CRASH<span>N'</span>SPIN</div>
+                <div class="balance">
+                    <!-- SVG icon for wallet -->
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-1 14H5c-.55 0-1-.45-1-1v-8h16v8c0 .55-.45 1-1 1zm1-10H4V6c0-.55.45-1 1-1h14c.55 0 1 .45 1 1v2z"></path><path d="M16 15c-1.11 0-2 .89-2 2s.89 2 2 2 2-.89 2-2-.89-2-2-2z"></path></svg>
+                    <span id="balance-amount">100.00</span>
                 </div>
-                <button class="spin-button" id="spin-button">SPIN!</button>
-                <button id="add-funds-button">Broke? Add $50</button>
-            </div>
-        </main>
+            </header>
 
-        <footer>
-            <p><strong>⚠️ Disclaimer:</strong> This is a simulation for entertainment purposes only. <strong>No real money is involved.</strong> Gambling can be addictive. If you or someone you know has a gambling problem, please seek help. This website does not endorse or promote real-money gambling.</p>
-        </footer>
+            <div class="crash-container">
+                <div class="progress-line" id="progress-line"></div>
+                <div id="multiplier">1.00x</div>
+                <div id="game-status">Starting round...</div>
+            </div>
+
+            <div class="controls-panel">
+                <div class="input-group">
+                    <label for="bet-amount">Bet Amount</label>
+                    <input type="number" id="bet-amount" class="input-field" value="10" min="1">
+                </div>
+                <div class="input-group">
+                    <label for="auto-cashout">Auto Cashout (e.g., 2.5)</label>
+                    <input type="number" id="auto-cashout" class="input-field" placeholder="2.0" step="0.1">
+                </div>
+                <button id="action-button" disabled>Place Bet</button>
+                <button id="add-funds-button">You're Broke! Add 100</button>
+            </div>
+        </div>
+
+        <!-- HISTORY PANEL -->
+        <div class="history-panel panel">
+            <h3>Recent Plays</h3>
+            <ul id="history-list">
+                <!-- History items will be injected here by JS -->
+            </ul>
+        </div>
+        
+        <!-- DISCLAIMER -->
+        <div class="disclaimer">
+            <p><strong>⚠️ SIMULATION ONLY:</strong> This website is for entertainment purposes. <strong>No real money is involved.</strong> All balances and bets are fictional. Gambling can be addictive. Please play responsibly.</p>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- DOM Elements ---
-            const balanceElement = document.getElementById('balance');
-            const reelElements = [
-                document.getElementById('reel1'),
-                document.getElementById('reel2'),
-                document.getElementById('reel3')
-            ];
-            const messageElement = document.getElementById('message');
-            const spinButton = document.getElementById('spin-button');
-            const betAmountInput = document.getElementById('bet-amount');
-            const addFundsButton = document.getElementById('add-funds-button');
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const balanceElement = document.getElementById('balance-amount');
+        const multiplierElement = document.getElementById('multiplier');
+        const gameStatusElement = document.getElementById('game-status');
+        const progressLine = document.getElementById('progress-line');
+        const betAmountInput = document.getElementById('bet-amount');
+        const autoCashoutInput = document.getElementById('auto-cashout');
+        const actionButton = document.getElementById('action-button');
+        const addFundsButton = document.getElementById('add-funds-button');
+        const historyList = document.getElementById('history-list');
 
-            // --- Game Configuration ---
-            const symbols = [
-                { symbol: '💰', payout: 50 }, // Jackpot
-                { symbol: '💎', payout: 25 },
-                { symbol: '⭐', payout: 15 },
-                { symbol: '🍉', payout: 8 },
-                { symbol: '🍊', payout: 6 },
-                { symbol: '🍋', payout: 4 },
-                { symbol: '🍒', payout: 2 }  // Lowest
-            ];
-            const spinDuration = 2000; // 2 seconds
-            const spinInterval = 100; // ms between symbol changes
+        // --- Game State ---
+        let balance = 100.00;
+        let isGameRunning = false;
+        let isBetPlaced = false;
+        let multiplier = 1.00;
+        let gameInterval;
 
-            // --- Game State ---
-            let balance = 100;
-            let isSpinning = false;
+        // --- Game Configuration ---
+        const COUNTDOWN_TIME = 5000; // 5 seconds
+        const TICK_RATE = 100; // 100ms
 
-            // --- Game Logic ---
-            const spin = () => {
-                if (isSpinning) return;
-
-                const betAmount = parseInt(betAmountInput.value);
-
-                // Validation
-                if (isNaN(betAmount) || betAmount <= 0) {
-                    displayMessage("Please enter a valid bet.", 'lose-message');
-                    return;
-                }
-                if (betAmount > balance) {
-                    displayMessage("Bet exceeds balance!", 'lose-message');
-                    return;
-                }
-                
-                startSpin(betAmount);
-            };
-
-            const startSpin = (betAmount) => {
-                isSpinning = true;
-                spinButton.disabled = true;
+        const updateBalanceDisplay = () => {
+            balanceElement.textContent = balance.toFixed(2);
+            if (balance < 1) {
+                addFundsButton.style.display = 'block';
+                actionButton.disabled = true;
+            } else {
                 addFundsButton.style.display = 'none';
-                clearMessage();
-                reelElements.forEach(reel => reel.classList.remove('win-highlight'));
+            }
+        };
 
+        const setGameStatus = (text, color) => {
+            gameStatusElement.textContent = text;
+            if (color) multiplierElement.style.color = `var(${color})`;
+        };
+        
+        const resetUI = () => {
+            multiplierElement.textContent = '1.00x';
+            multiplierElement.style.color = 'var(--text-primary)';
+            actionButton.textContent = 'Place Bet';
+            actionButton.classList.remove('cashout-btn');
+            actionButton.disabled = balance < 1;
+            isBetPlaced = false;
+            progressLine.style.width = '0%';
+            progressLine.style.height = '5px';
+        };
 
-                balance -= betAmount;
-                updateBalanceDisplay();
-
-                let spinIntervalId = setInterval(() => {
-                    reelElements.forEach(reel => {
-                        reel.textContent = getRandomSymbol().symbol;
-                    });
-                }, spinInterval);
-                
-                setTimeout(() => {
-                    clearInterval(spinIntervalId);
-                    resolveSpin(betAmount);
-                }, spinDuration);
-            };
-
-            const resolveSpin = (betAmount) => {
-                const finalReels = reelElements.map(() => getRandomSymbol());
-                
-                reelElements.forEach((reel, index) => {
-                    reel.textContent = finalReels[index].symbol;
-                });
-                
-                calculateWinnings(finalReels, betAmount);
-
-                isSpinning = false;
-                if (balance > 0) {
-                    spinButton.disabled = false;
-                } else {
-                    displayMessage("Game Over! Add more funds to play again.", 'lose-message');
-                    addFundsButton.style.display = 'block';
-                }
-            };
+        const startCountdown = () => {
+            resetUI();
+            let countdown = COUNTDOWN_TIME / 1000;
+            setGameStatus(`Starting in ${countdown}s...`);
             
-            const calculateWinnings = (reels, betAmount) => {
-                const [r1, r2, r3] = reels;
-                let winnings = 0;
-                let win = false;
-
-                // Three of a kind
-                if (r1.symbol === r2.symbol && r2.symbol === r3.symbol) {
-                    winnings = betAmount * r1.payout;
-                    win = true;
-                    highlightWinningReels([0, 1, 2]);
-                } 
-                // Two cherries (a common slot machine rule)
-                else if ( (r1.symbol === '🍒' && r2.symbol === '🍒') ) {
-                     winnings = betAmount * 2; // Small win for two cherries
-                     win = true;
-                     highlightWinningReels([0, 1]);
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                setGameStatus(`Starting in ${countdown}s...`);
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    startGame();
                 }
+            }, 1000);
+        };
 
-                if (win) {
-                    balance += winnings;
-                    displayMessage(`You won $${winnings}!`, 'win-message');
-                } else {
-                    displayMessage("Try again!", 'lose-message');
-                }
-                
-                updateBalanceDisplay();
-            };
-
-            const addFunds = () => {
-                if (balance <= 0) {
-                    balance = 50;
-                    updateBalanceDisplay();
-                    clearMessage();
-                    spinButton.disabled = false;
-                    addFundsButton.style.display = 'none';
-                }
-            };
-
-            // --- Helper Functions ---
-            const getRandomSymbol = () => {
-                // Weighted randomness to make jackpots rarer
-                const rand = Math.random();
-                if (rand < 0.02) return symbols[0]; // 2% chance for 💰
-                if (rand < 0.07) return symbols[1]; // 5% chance for 💎
-                if (rand < 0.15) return symbols[2]; // 8% chance for ⭐
-                if (rand < 0.30) return symbols[3]; // 15% chance for 🍉
-                if (rand < 0.50) return symbols[4]; // 20% chance for 🍊
-                if (rand < 0.75) return symbols[5]; // 25% chance for 🍋
-                return symbols[6];                 // 25% chance for 🍒
-            };
-
-            const updateBalanceDisplay = () => {
-                balanceElement.textContent = balance;
-                if (balance <= 0) {
-                    balanceElement.style.color = var(--lose-color);
-                } else {
-                    balanceElement.style.color = var(--win-color);
-                }
-                // Ensure bet amount is not higher than balance
-                betAmountInput.max = balance;
-            };
-
-            const displayMessage = (text, className) => {
-                messageElement.textContent = text;
-                messageElement.className = className;
-            };
+        const startGame = () => {
+            isGameRunning = true;
+            multiplier = 1.00;
+            setGameStatus('Good luck!');
+            if (isBetPlaced) {
+                actionButton.textContent = `Cash Out @ ${multiplier.toFixed(2)}x`;
+                actionButton.classList.add('cashout-btn');
+                actionButton.disabled = false;
+            } else {
+                actionButton.disabled = true;
+            }
             
-            const clearMessage = () => {
-                messageElement.textContent = '';
-                messageElement.className = '';
-            };
-
-            const highlightWinningReels = (indices) => {
-                indices.forEach(i => reelElements[i].classList.add('win-highlight'));
-            };
-
-            // --- Event Listeners ---
-            spinButton.addEventListener('click', spin);
-            addFundsButton.addEventListener('click', addFunds);
+            progressLine.style.transition = 'none'; // Use JS to update for smooth start
             
-            // --- Initial Setup ---
+            gameInterval = setInterval(gameTick, TICK_RATE);
+        };
+        
+        const gameTick = () => {
+            // Growth factor gets larger as multiplier increases, making it accelerate
+            const growth = 0.0005 * multiplier;
+            multiplier += growth;
+            multiplierElement.textContent = `${multiplier.toFixed(2)}x`;
+            
+            // Update progress line
+            const progress = Math.min(100, (multiplier / 10) * 100); // Caps at 10x for visual
+            progressLine.style.width = `${progress}%`;
+
+            if (isBetPlaced) {
+                actionButton.textContent = `Cash Out @ ${multiplier.toFixed(2)}x`;
+                const autoCashoutValue = parseFloat(autoCashoutInput.value);
+                if (autoCashoutValue && multiplier >= autoCashoutValue) {
+                    cashOut();
+                }
+            }
+            
+            // Crash logic: probability increases with the multiplier
+            const crashProbability = 0.005 + (0.005 * (multiplier / 5)); // Base chance + growing chance
+            if (Math.random() < crashProbability) {
+                crashGame();
+            }
+        };
+
+        const crashGame = () => {
+            clearInterval(gameInterval);
+            isGameRunning = false;
+            setGameStatus(`Crashed @ ${multiplier.toFixed(2)}x`, '--accent-red');
+            progressLine.style.height = '100%';
+            progressLine.style.background = 'var(--accent-red)';
+            
+            if (isBetPlaced) {
+                // Player lost
+                setGameStatus(`You lost! Crashed @ ${multiplier.toFixed(2)}x`, '--accent-red');
+                isBetPlaced = false;
+            }
+            
+            addHistoryItem(multiplier, false);
+            
+            setTimeout(startCountdown, 3000);
+        };
+        
+        const placeBet = () => {
+            const betAmount = parseFloat(betAmountInput.value);
+            if (isNaN(betAmount) || betAmount <= 0) {
+                alert("Please enter a valid bet amount.");
+                return;
+            }
+            if (betAmount > balance) {
+                alert("Bet amount cannot exceed your balance.");
+                return;
+            }
+            if (isGameRunning) {
+                alert("Cannot place bet while a round is in progress.");
+                return;
+            }
+
+            balance -= betAmount;
             updateBalanceDisplay();
-        });
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vegas Luck Online - Fun Slots!</title>
-    
-    <style>
-        /* --- Global Styles & Theme --- */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Staatliches&display=swap');
+            isBetPlaced = true;
+            actionButton.disabled = true;
+            setGameStatus('Bet placed! Waiting for next round...');
+        };
 
-        :root {
-            --bg-color: #1a1a1a;
-            --primary-color: #2c2c2c;
-            --accent-color: #ffd700; /* Gold */
-            --text-color: #f0f0f0;
-            --win-color: #4CAF50; /* Green */
-            --lose-color: #F44336; /* Red */
-            --button-color: #007BFF;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* --- Main Container --- */
-        .container {
-            background-color: var(--primary-color);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.1);
-            border: 2px solid var(--accent-color);
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        header h1 {
-            font-family: 'Staatliches', cursive;
-            color: var(--accent-color);
-            font-size: 3rem;
-            margin: 0 0 1rem 0;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-            letter-spacing: 2px;
-        }
-
-        /* --- Balance & Messages --- */
-        .balance-info {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: bold;
-        }
-
-        #balance {
-            color: var(--win-color);
-            transition: color 0.3s;
-        }
-
-        #message {
-            font-size: 1.2rem;
-            font-weight: bold;
-            height: 25px;
-            margin: 1rem 0;
-            transition: color 0.3s;
-        }
-
-        .win-message { color: var(--win-color); }
-        .lose-message { color: var(--lose-color); }
-
-        /* --- Slot Machine --- */
-        .slot-machine {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 2rem;
-            padding: 20px;
-            background: #111;
-            border-radius: 10px;
-            border: 1px solid #444;
-        }
-
-        .reel {
-            width: 100px;
-            height: 100px;
-            background-color: #f0f0f0;
-            border: 3px solid #333;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3.5rem;
-            overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        .reel.win-highlight {
-            animation: win-pulse 0.8s infinite;
-        }
-        
-        @keyframes win-pulse {
-            0% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 0px var(--accent-color); }
-            50% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 20px var(--accent-color); }
-            100% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 0px var(--accent-color); }
-        }
-
-        /* --- Controls --- */
-        .controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .bet-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.2rem;
-        }
-
-        #bet-amount {
-            width: 80px;
-            padding: 8px;
-            font-size: 1.2rem;
-            text-align: center;
-            border: 2px solid #555;
-            background-color: #333;
-            color: var(--text-color);
-            border-radius: 5px;
-            -moz-appearance: textfield; /* Firefox */
-        }
-        #bet-amount::-webkit-outer-spin-button,
-        #bet-amount::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        .spin-button {
-            font-family: 'Staatliches', cursive;
-            font-size: 2rem;
-            letter-spacing: 1px;
-            padding: 10px 40px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background: linear-gradient(145deg, #0088ff, #0055cc);
-            color: white;
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
-            transition: all 0.2s ease-in-out;
-        }
-
-        .spin-button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.6);
-        }
-
-        .spin-button:active:not(:disabled) {
-            transform: translateY(1px);
-        }
-
-        .spin-button:disabled {
-            background: #555;
-            color: #999;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        
-        #add-funds-button {
-            background: var(--win-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 10px;
-            display: none; /* Initially hidden */
-        }
-
-        /* --- Footer --- */
-        footer {
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: rgba(255, 0, 0, 0.1);
-            border: 1px solid var(--lose-color);
-            border-radius: 8px;
-            max-width: 90%;
-        }
-
-        footer p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #ddd;
-        }
-        
-        footer strong {
-            color: var(--lose-color);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <header>
-            <h1>Vegas Luck Online</h1>
-        </header>
-
-        <main>
-            <p class="balance-info">Your Balance: $<span id="balance">100</span></p>
-
-            <div class="slot-machine">
-                <div class="reel" id="reel1">🍒</div>
-                <div class="reel" id="reel2">🍋</div>
-                <div class="reel" id="reel3">🍊</div>
-            </div>
-
-            <p id="message"></p>
-
-            <div class="controls">
-                 <div class="bet-control">
-                    <label for="bet-amount">Bet Amount:</label>
-                    <input type="number" id="bet-amount" value="5" min="1">
-                </div>
-                <button class="spin-button" id="spin-button">SPIN!</button>
-                <button id="add-funds-button">Broke? Add $50</button>
-            </div>
-        </main>
-
-        <footer>
-            <p><strong>⚠️ Disclaimer:</strong> This is a simulation for entertainment purposes only. <strong>No real money is involved.</strong> Gambling can be addictive. If you or someone you know has a gambling problem, please seek help. This website does not endorse or promote real-money gambling.</p>
-        </footer>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- DOM Elements ---
-            const balanceElement = document.getElementById('balance');
-            const reelElements = [
-                document.getElementById('reel1'),
-                document.getElementById('reel2'),
-                document.getElementById('reel3')
-            ];
-            const messageElement = document.getElementById('message');
-            const spinButton = document.getElementById('spin-button');
-            const betAmountInput = document.getElementById('bet-amount');
-            const addFundsButton = document.getElementById('add-funds-button');
-
-            // --- Game Configuration ---
-            const symbols = [
-                { symbol: '💰', payout: 50 }, // Jackpot
-                { symbol: '💎', payout: 25 },
-                { symbol: '⭐', payout: 15 },
-                { symbol: '🍉', payout: 8 },
-                { symbol: '🍊', payout: 6 },
-                { symbol: '🍋', payout: 4 },
-                { symbol: '🍒', payout: 2 }  // Lowest
-            ];
-            const spinDuration = 2000; // 2 seconds
-            const spinInterval = 100; // ms between symbol changes
-
-            // --- Game State ---
-            let balance = 100;
-            let isSpinning = false;
-
-            // --- Game Logic ---
-            const spin = () => {
-                if (isSpinning) return;
-
-                const betAmount = parseInt(betAmountInput.value);
-
-                // Validation
-                if (isNaN(betAmount) || betAmount <= 0) {
-                    displayMessage("Please enter a valid bet.", 'lose-message');
-                    return;
-                }
-                if (betAmount > balance) {
-                    displayMessage("Bet exceeds balance!", 'lose-message');
-                    return;
-                }
-                
-                startSpin(betAmount);
-            };
-
-            const startSpin = (betAmount) => {
-                isSpinning = true;
-                spinButton.disabled = true;
-                addFundsButton.style.display = 'none';
-                clearMessage();
-                reelElements.forEach(reel => reel.classList.remove('win-highlight'));
-
-
-                balance -= betAmount;
-                updateBalanceDisplay();
-
-                let spinIntervalId = setInterval(() => {
-                    reelElements.forEach(reel => {
-                        reel.textContent = getRandomSymbol().symbol;
-                    });
-                }, spinInterval);
-                
-                setTimeout(() => {
-                    clearInterval(spinIntervalId);
-                    resolveSpin(betAmount);
-                }, spinDuration);
-            };
-
-            const resolveSpin = (betAmount) => {
-                const finalReels = reelElements.map(() => getRandomSymbol());
-                
-                reelElements.forEach((reel, index) => {
-                    reel.textContent = finalReels[index].symbol;
-                });
-                
-                calculateWinnings(finalReels, betAmount);
-
-                isSpinning = false;
-                if (balance > 0) {
-                    spinButton.disabled = false;
-                } else {
-                    displayMessage("Game Over! Add more funds to play again.", 'lose-message');
-                    addFundsButton.style.display = 'block';
-                }
-            };
+        const cashOut = () => {
+            if (!isBetPlaced) return;
             
-            const calculateWinnings = (reels, betAmount) => {
-                const [r1, r2, r3] = reels;
-                let winnings = 0;
-                let win = false;
-
-                // Three of a kind
-                if (r1.symbol === r2.symbol && r2.symbol === r3.symbol) {
-                    winnings = betAmount * r1.payout;
-                    win = true;
-                    highlightWinningReels([0, 1, 2]);
-                } 
-                // Two cherries (a common slot machine rule)
-                else if ( (r1.symbol === '🍒' && r2.symbol === '🍒') ) {
-                     winnings = betAmount * 2; // Small win for two cherries
-                     win = true;
-                     highlightWinningReels([0, 1]);
-                }
-
-                if (win) {
-                    balance += winnings;
-                    displayMessage(`You won $${winnings}!`, 'win-message');
-                } else {
-                    displayMessage("Try again!", 'lose-message');
-                }
-                
-                updateBalanceDisplay();
-            };
-
-            const addFunds = () => {
-                if (balance <= 0) {
-                    balance = 50;
-                    updateBalanceDisplay();
-                    clearMessage();
-                    spinButton.disabled = false;
-                    addFundsButton.style.display = 'none';
-                }
-            };
-
-            // --- Helper Functions ---
-            const getRandomSymbol = () => {
-                // Weighted randomness to make jackpots rarer
-                const rand = Math.random();
-                if (rand < 0.02) return symbols[0]; // 2% chance for 💰
-                if (rand < 0.07) return symbols[1]; // 5% chance for 💎
-                if (rand < 0.15) return symbols[2]; // 8% chance for ⭐
-                if (rand < 0.30) return symbols[3]; // 15% chance for 🍉
-                if (rand < 0.50) return symbols[4]; // 20% chance for 🍊
-                if (rand < 0.75) return symbols[5]; // 25% chance for 🍋
-                return symbols[6];                 // 25% chance for 🍒
-            };
-
-            const updateBalanceDisplay = () => {
-                balanceElement.textContent = balance;
-                if (balance <= 0) {
-                    balanceElement.style.color = var(--lose-color);
-                } else {
-                    balanceElement.style.color = var(--win-color);
-                }
-                // Ensure bet amount is not higher than balance
-                betAmountInput.max = balance;
-            };
-
-            const displayMessage = (text, className) => {
-                messageElement.textContent = text;
-                messageElement.className = className;
-            };
-            
-            const clearMessage = () => {
-                messageElement.textContent = '';
-                messageElement.className = '';
-            };
-
-            const highlightWinningReels = (indices) => {
-                indices.forEach(i => reelElements[i].classList.add('win-highlight'));
-            };
-
-            // --- Event Listeners ---
-            spinButton.addEventListener('click', spin);
-            addFundsButton.addEventListener('click', addFunds);
-            
-            // --- Initial Setup ---
+            const betAmount = parseFloat(betAmountInput.value);
+            const winnings = betAmount * multiplier;
+            balance += winnings;
             updateBalanceDisplay();
+            
+            setGameStatus(`Cashed out @ ${multiplier.toFixed(2)}x! You won ${winnings.toFixed(2)}`, '--accent-primary');
+            actionButton.disabled = true;
+            isBetPlaced = false;
+        };
+
+        const addHistoryItem = (crashPoint, wasWin) => {
+            const item = document.createElement('li');
+            item.className = 'history-item';
+            
+            const multiplierSpan = document.createElement('span');
+            multiplierSpan.textContent = `${crashPoint.toFixed(2)}x`;
+            multiplierSpan.className = 'history-multiplier';
+            multiplierSpan.classList.add(crashPoint > 1.5 ? 'win' : 'loss'); // Simple win/loss coloring
+            
+            const timeSpan = document.createElement('span');
+            timeSpan.textContent = new Date().toLocaleTimeString();
+            timeSpan.className = 'history-time';
+            
+            item.appendChild(multiplierSpan);
+            item.appendChild(timeSpan);
+            
+            historyList.prepend(item);
+            
+            // Limit history to 20 items
+            if (historyList.children.length > 20) {
+                historyList.lastChild.remove();
+            }
+        };
+        
+        // --- Event Listeners ---
+        actionButton.addEventListener('click', () => {
+            if (isGameRunning && isBetPlaced) {
+                cashOut();
+            } else {
+                placeBet();
+            }
         });
+
+        addFundsButton.addEventListener('click', () => {
+            if (balance < 1) {
+                balance += 100;
+                updateBalanceDisplay();
+                actionButton.disabled = false;
+            }
+        });
+        
+        // --- Initial Load ---
+        updateBalanceDisplay();
+        startCountdown();
+    });
     </script>
 </body>
 </html>
