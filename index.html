@@ -3,531 +3,873 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRASH N' SPIN - Next-Gen Gaming</title>
+    <title>Nexus Arcade - Simulated Gaming</title>
     <style>
-        /* --- Font Import --- */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-        /* --- CSS Variables (Theme) --- */
+        /* --- Font Import & Global Setup --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
         :root {
-            --bg-dark: #1a1f2c;
-            --bg-light: #232a39;
-            --bg-accent: #30384c;
+            --bg-dark-1: #1a1f2c; /* Deepest background */
+            --bg-dark-2: #232a39; /* Lighter background, panels */
+            --bg-dark-3: #30384c; /* Hover/active elements */
             --text-primary: #e1e1e6;
             --text-secondary: #a8a8b3;
-            --accent-primary: #00ff66; /* Vibrant Green */
+            --accent-green: #00ff66;
             --accent-red: #ff4757;
+            --accent-blue: #3498db;
             --accent-yellow: #f1c40f;
             --border-color: #3e485e;
         }
 
-        /* --- Base Styles --- */
-        *, *::before, *::after {
+        * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark-1);
             color: var(--text-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- Main App Layout --- */
-        .app-container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-            background-color: var(--bg-light);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        @media (max-width: 900px) {
-            .app-container {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* --- Panel Base Styles --- */
-        .panel {
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* --- Game Panel (Left Side) --- */
-        .game-panel {
-            background-color: var(--bg-dark);
-            gap: 20px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .logo span { color: var(--accent-primary); }
-        
-        .balance {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: var(--bg-light);
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        .balance svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--accent-yellow);
-        }
-        
-        #balance-amount {
-            font-size: 1.1rem;
-        }
-
-        /* Crash Game Visualizer */
-        .crash-container {
-            position: relative;
-            height: 300px;
-            background-color: var(--bg-light);
-            border-radius: 12px;
+        /* --- AUTHENTICATION VIEWS (LOGIN/REGISTER) --- */
+        .auth-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        .auth-form {
+            background-color: var(--bg-dark-2);
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
             border: 1px solid var(--border-color);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
-        #multiplier {
-            font-size: 5rem;
-            font-weight: 700;
+        .auth-form h1 {
+            text-align: center;
+            margin-bottom: 25px;
             color: var(--text-primary);
-            transition: color 0.3s ease;
-            z-index: 2;
         }
 
-        #game-status {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            z-index: 2;
-            transition: opacity 0.3s ease;
+        .auth-form .input-group {
+            margin-bottom: 20px;
         }
-        
-        .progress-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-yellow));
-            transition: width 0.1s linear, height 0.3s ease;
-            z-index: 1;
-        }
-        
-        /* Controls Panel */
-        .controls-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .input-group label {
+
+        .auth-form label {
+            display: block;
+            margin-bottom: 8px;
             font-size: 0.9rem;
             color: var(--text-secondary);
-            margin-bottom: 5px;
         }
-        
-        .input-field {
+
+        .auth-form input {
             width: 100%;
             padding: 12px;
-            font-size: 1rem;
-            background-color: var(--bg-light);
+            border-radius: 8px;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            background-color: var(--bg-dark-1);
             color: var(--text-primary);
-            font-weight: 500;
+            font-size: 1rem;
         }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-        }
-        
-        #action-button {
-            grid-column: 1 / -1;
-            padding: 15px;
-            font-size: 1.2rem;
+
+        .auth-form button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--accent-blue);
+            color: #fff;
+            font-size: 1rem;
             font-weight: 600;
-            border: none;
-            border-radius: 8px;
             cursor: pointer;
-            color: var(--bg-dark);
-            background-color: var(--accent-primary);
-            transition: all 0.2s ease-in-out;
+            transition: background-color 0.2s;
         }
-        
-        #action-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 102, 0.2);
-        }
-        
-        #action-button:disabled {
-            background-color: #555;
-            color: #999;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
+        .auth-form button:hover { background-color: #2980b9; }
+
+        .auth-form .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
         }
 
-        #action-button.cashout-btn {
-            background-color: var(--accent-yellow);
-        }
-        
-        #add-funds-button {
-            grid-column: 1 / -1;
-            padding: 10px;
-            background-color: var(--accent-red);
-            color: white;
-            border: none;
-            border-radius: 8px;
+        .auth-form .switch-form span {
+            color: var(--accent-blue);
             cursor: pointer;
-            display: none;
-        }
-
-        /* --- History Panel (Right Side) --- */
-        .history-panel h3 {
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-        
-        #history-list {
-            list-style: none;
-            overflow-y: auto;
-            max-height: 450px;
-            display: flex;
-            flex-direction: column-reverse; /* Newest on top */
-        }
-        
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 5px;
-            border-bottom: 1px solid var(--bg-accent);
             font-weight: 500;
-            animation: slideIn 0.5s ease-out forwards;
+        }
+        
+        #auth-error {
+            color: var(--accent-red);
+            text-align: center;
+            margin-bottom: 15px;
+            min-height: 20px;
+            font-size: 0.9rem;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
+        /* --- MAIN APP LAYOUT --- */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            max-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-dark-2);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        .sidebar .logo span { color: var(--accent-green); }
+
+        .user-profile {
+            margin-bottom: 30px;
+            background-color: var(--bg-dark-1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .user-profile #username-display { font-weight: 600; }
+        .user-profile #balance-display { color: var(--accent-yellow); font-weight: 500; margin-top: 5px; }
+
+        .navigation {
+            flex-grow: 1;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        .nav-item:hover, .nav-item.active { background-color: var(--bg-dark-3); }
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--text-secondary);
+            transition: fill 0.2s;
+        }
+        .nav-item:hover svg, .nav-item.active svg { fill: var(--text-primary); }
+
+        #logout-button {
+            margin-top: auto;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .game-view {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .history-item:last-child {
-            border-bottom: none;
+        /* --- SHARED GAME STYLES --- */
+        .game-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .controls-panel {
+            background-color: var(--bg-dark-2);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
         }
         
-        .history-multiplier.win { color: var(--accent-primary); }
-        .history-multiplier.loss { color: var(--accent-red); }
-        .history-time { font-size: 0.8rem; color: var(--text-secondary); }
+        .game-area {
+            background-color: var(--bg-dark-2);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-secondary);
+        }
+        .input-field {
+            width: 100%; padding: 12px; font-size: 1rem; background-color: var(--bg-dark-1);
+            border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);
+        }
 
-        /* --- Disclaimer Footer --- */
-        .disclaimer {
-            grid-column: 1 / -1;
-            padding: 15px 25px;
-            background-color: rgba(255, 71, 87, 0.1);
-            border-top: 1px solid var(--accent-red);
-            font-size: 0.8rem;
-            text-align: center;
+        .action-button {
+            width: 100%; padding: 15px; font-size: 1.2rem; font-weight: 600; border: none;
+            border-radius: 8px; cursor: pointer; color: var(--bg-dark-1);
+            background-color: var(--accent-green); transition: all 0.2s;
+        }
+        .action-button:disabled { background-color: #555; color: #999; cursor: not-allowed; }
+
+        /* --- CRASH GAME STYLES --- */
+        #crash-game-view .game-area {
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #crash-multiplier {
+            font-size: 5rem;
+            font-weight: 700;
+        }
+        
+        #crash-status {
+            font-size: 1.2rem;
             color: var(--text-secondary);
         }
-        .disclaimer strong { color: var(--accent-red); }
+
+        /* --- MINES GAME STYLES --- */
+        #mines-game-view .game-area { padding: 25px; }
+        
+        #mines-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #mines-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 10px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .mine-tile {
+            background-color: var(--bg-dark-3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+        }
+        .mine-tile:not(.revealed):hover {
+            transform: scale(1.05);
+            background-color: #434d69;
+        }
+        .mine-tile.revealed { cursor: default; }
+        .mine-tile.gem { background-color: rgba(0, 255, 102, 0.2); }
+        .mine-tile.mine { background-color: rgba(255, 71, 87, 0.2); }
+        .mine-tile.disabled { opacity: 0.7; cursor: not-allowed; }
+        
+        /* --- WALLET VIEW STYLES --- */
+        #wallet-view h2 { margin-bottom: 20px; }
+        .wallet-card {
+            background: var(--bg-dark-2); padding: 30px; border-radius: 12px;
+            text-align: center; max-width: 400px; margin: 20px auto;
+        }
+        .wallet-card p { font-size: 1.2rem; color: var(--text-secondary); }
+        .wallet-card .balance-large {
+            font-size: 3rem; color: var(--accent-yellow); font-weight: 700; margin: 10px 0 30px;
+        }
+        #add-funds-button {
+            padding: 12px 25px; background-color: var(--accent-blue);
+        }
+
+        /* --- UTILITY & RESPONSIVENESS --- */
+        .hidden { display: none !important; }
+        .error-msg { color: var(--accent-red); margin-top: 10px; min-height: 20px; text-align: center; }
+
+        @media (max-width: 1200px) {
+            .game-container { grid-template-columns: 1fr; }
+            .controls-panel { order: 2; }
+            .game-area { order: 1; }
+        }
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; flex-direction: row; align-items: center; justify-content: space-between; }
+            .sidebar .logo { margin-bottom: 0; }
+            .user-profile, .navigation, #logout-button { display: none; } /* Simplified for mobile example */
+            .main-content { padding: 20px; }
+        }
+        
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- GAME PANEL -->
-        <div class="game-panel panel">
-            <header class="header">
-                <div class="logo">CRASH<span>N'</span>SPIN</div>
-                <div class="balance">
-                    <!-- SVG icon for wallet -->
-                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-1 14H5c-.55 0-1-.45-1-1v-8h16v8c0 .55-.45 1-1 1zm1-10H4V6c0-.55.45-1 1-1h14c.55 0 1 .45 1 1v2z"></path><path d="M16 15c-1.11 0-2 .89-2 2s.89 2 2 2 2-.89 2-2-.89-2-2-2z"></path></svg>
-                    <span id="balance-amount">100.00</span>
-                </div>
-            </header>
-
-            <div class="crash-container">
-                <div class="progress-line" id="progress-line"></div>
-                <div id="multiplier">1.00x</div>
-                <div id="game-status">Starting round...</div>
-            </div>
-
-            <div class="controls-panel">
+    <!-- AUTH VIEWS -->
+    <div id="login-view" class="auth-container">
+        <div class="auth-form">
+            <h1>Login to Nexus Arcade</h1>
+            <p id="login-error" class="error-msg"></p>
+            <form id="login-form">
                 <div class="input-group">
-                    <label for="bet-amount">Bet Amount</label>
-                    <input type="number" id="bet-amount" class="input-field" value="10" min="1">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required>
                 </div>
                 <div class="input-group">
-                    <label for="auto-cashout">Auto Cashout (e.g., 2.5)</label>
-                    <input type="number" id="auto-cashout" class="input-field" placeholder="2.0" step="0.1">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
                 </div>
-                <button id="action-button" disabled>Place Bet</button>
-                <button id="add-funds-button">You're Broke! Add 100</button>
-            </div>
-        </div>
-
-        <!-- HISTORY PANEL -->
-        <div class="history-panel panel">
-            <h3>Recent Plays</h3>
-            <ul id="history-list">
-                <!-- History items will be injected here by JS -->
-            </ul>
-        </div>
-        
-        <!-- DISCLAIMER -->
-        <div class="disclaimer">
-            <p><strong>⚠️ SIMULATION ONLY:</strong> This website is for entertainment purposes. <strong>No real money is involved.</strong> All balances and bets are fictional. Gambling can be addictive. Please play responsibly.</p>
+                <button type="submit">Login</button>
+            </form>
+            <p class="switch-form">No account? <span id="show-register">Register here</span></p>
         </div>
     </div>
 
+    <div id="register-view" class="auth-container hidden">
+        <div class="auth-form">
+            <h1>Create an Account</h1>
+            <p id="register-error" class="error-msg"></p>
+            <form id="register-form">
+                <div class="input-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" required>
+                </div>
+                <div class="input-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <p class="switch-form">Already have an account? <span id="show-login">Login here</span></p>
+        </div>
+    </div>
+
+    <!-- MAIN APP VIEW -->
+    <div id="app-view" class="app-container hidden">
+        <aside class="sidebar">
+            <div class="logo">Nexus<span>A</span></div>
+            <div class="user-profile">
+                <div id="username-display"></div>
+                <div id="balance-display"></div>
+            </div>
+            <nav class="navigation">
+                <div class="nav-item" data-view="crash-game-view">
+                    <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"></path></svg>
+                    <span>Crash</span>
+                </div>
+                <div class="nav-item" data-view="mines-game-view">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.03 2h2.06c.52 0 .97.35 1.14.84l.43 1.25c.17.49-.17.91-.67.91H9.07c-.5 0-.84-.42-.67-.91l.43-1.25c.17-.49.62-.84 1.14-.84zM18 19H6c-.55 0-1-.45-1-1V8h14v10c0 .55-.45 1-1 1z"></path></svg>
+                    <span>Mines</span>
+                </div>
+                <div class="nav-item" data-view="wallet-view">
+                    <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path></svg>
+                    <span>Wallet</span>
+                </div>
+            </nav>
+            <div id="logout-button" class="nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                <span>Logout</span>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Crash Game -->
+            <div id="crash-game-view" class="game-view hidden">
+                <div class="game-container">
+                    <div class="game-area">
+                        <div id="crash-multiplier">1.00x</div>
+                        <div id="crash-status">Starting round...</div>
+                    </div>
+                    <div class="controls-panel">
+                        <h3>Crash Controls</h3>
+                        <div class="input-group">
+                            <label for="crash-bet-amount">Bet Amount</label>
+                            <input type="number" id="crash-bet-amount" class="input-field" value="10" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="crash-auto-cashout">Auto Cashout</label>
+                            <input type="number" id="crash-auto-cashout" class="input-field" placeholder="e.g., 2.0">
+                        </div>
+                        <button id="crash-action-button" class="action-button">Place Bet</button>
+                        <p id="crash-error" class="error-msg"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mines Game -->
+            <div id="mines-game-view" class="game-view hidden">
+                 <div class="game-container">
+                    <div class="game-area">
+                        <div id="mines-info">
+                            <div>Gems Found: <span id="mines-gems-found">0</span></div>
+                            <div>Next Multiplier: <span id="mines-next-multiplier">1.03x</span></div>
+                        </div>
+                        <div id="mines-grid"></div>
+                    </div>
+                    <div class="controls-panel">
+                        <h3>Mines Controls</h3>
+                        <div class="input-group">
+                            <label for="mines-bet-amount">Bet Amount</label>
+                            <input type="number" id="mines-bet-amount" class="input-field" value="10" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="mines-count">Number of Mines</label>
+                            <input type="number" id="mines-count" class="input-field" value="3" min="1" max="24">
+                        </div>
+                        <button id="mines-action-button" class="action-button">Start Game</button>
+                        <p id="mines-error" class="error-msg"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet View -->
+            <div id="wallet-view" class="game-view hidden">
+                <div class="wallet-card">
+                    <h2>Your Wallet</h2>
+                    <p>Current Balance</p>
+                    <div id="wallet-balance-large" class="balance-large">$100.00</div>
+                    <button id="add-funds-button" class="action-button">Add $100 (Simulated)</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- DOM Elements ---
-        const balanceElement = document.getElementById('balance-amount');
-        const multiplierElement = document.getElementById('multiplier');
-        const gameStatusElement = document.getElementById('game-status');
-        const progressLine = document.getElementById('progress-line');
-        const betAmountInput = document.getElementById('bet-amount');
-        const autoCashoutInput = document.getElementById('auto-cashout');
-        const actionButton = document.getElementById('action-button');
-        const addFundsButton = document.getElementById('add-funds-button');
-        const historyList = document.getElementById('history-list');
-
-        // --- Game State ---
-        let balance = 100.00;
-        let isGameRunning = false;
-        let isBetPlaced = false;
-        let multiplier = 1.00;
-        let gameInterval;
-
-        // --- Game Configuration ---
-        const COUNTDOWN_TIME = 5000; // 5 seconds
-        const TICK_RATE = 100; // 100ms
-
-        const updateBalanceDisplay = () => {
-            balanceElement.textContent = balance.toFixed(2);
-            if (balance < 1) {
-                addFundsButton.style.display = 'block';
-                actionButton.disabled = true;
-            } else {
-                addFundsButton.style.display = 'none';
-            }
-        };
-
-        const setGameStatus = (text, color) => {
-            gameStatusElement.textContent = text;
-            if (color) multiplierElement.style.color = `var(${color})`;
-        };
-        
-        const resetUI = () => {
-            multiplierElement.textContent = '1.00x';
-            multiplierElement.style.color = 'var(--text-primary)';
-            actionButton.textContent = 'Place Bet';
-            actionButton.classList.remove('cashout-btn');
-            actionButton.disabled = balance < 1;
-            isBetPlaced = false;
-            progressLine.style.width = '0%';
-            progressLine.style.height = '5px';
-        };
-
-        const startCountdown = () => {
-            resetUI();
-            let countdown = COUNTDOWN_TIME / 1000;
-            setGameStatus(`Starting in ${countdown}s...`);
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                setGameStatus(`Starting in ${countdown}s...`);
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    startGame();
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- GLOBAL STATE ---
+            let state = {
+                currentUser: null,
+                users: {},
+                activeView: 'login-view',
+                games: {
+                    crash: {
+                        running: false,
+                        betPlaced: false,
+                        multiplier: 1.0,
+                        interval: null
+                    },
+                    mines: {
+                        active: false,
+                        board: [],
+                        bet: 0,
+                        mineCount: 0,
+                        revealedCount: 0,
+                        currentMultiplier: 1.0,
+                    }
                 }
-            }, 1000);
-        };
+            };
 
-        const startGame = () => {
-            isGameRunning = true;
-            multiplier = 1.00;
-            setGameStatus('Good luck!');
-            if (isBetPlaced) {
-                actionButton.textContent = `Cash Out @ ${multiplier.toFixed(2)}x`;
-                actionButton.classList.add('cashout-btn');
-                actionButton.disabled = false;
-            } else {
-                actionButton.disabled = true;
-            }
-            
-            progressLine.style.transition = 'none'; // Use JS to update for smooth start
-            
-            gameInterval = setInterval(gameTick, TICK_RATE);
-        };
-        
-        const gameTick = () => {
-            // Growth factor gets larger as multiplier increases, making it accelerate
-            const growth = 0.0005 * multiplier;
-            multiplier += growth;
-            multiplierElement.textContent = `${multiplier.toFixed(2)}x`;
-            
-            // Update progress line
-            const progress = Math.min(100, (multiplier / 10) * 100); // Caps at 10x for visual
-            progressLine.style.width = `${progress}%`;
+            // --- DOM ELEMENTS ---
+            const views = {
+                login: document.getElementById('login-view'),
+                register: document.getElementById('register-view'),
+                app: document.getElementById('app-view'),
+                crash: document.getElementById('crash-game-view'),
+                mines: document.getElementById('mines-game-view'),
+                wallet: document.getElementById('wallet-view')
+            };
 
-            if (isBetPlaced) {
-                actionButton.textContent = `Cash Out @ ${multiplier.toFixed(2)}x`;
-                const autoCashoutValue = parseFloat(autoCashoutInput.value);
-                if (autoCashoutValue && multiplier >= autoCashoutValue) {
-                    cashOut();
+            const navItems = document.querySelectorAll('.nav-item');
+            const logoutButton = document.getElementById('logout-button');
+            const usernameDisplay = document.getElementById('username-display');
+            const balanceDisplay = document.getElementById('balance-display');
+            const walletBalanceLarge = document.getElementById('wallet-balance-large');
+
+            // --- AUTH ELEMENTS ---
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const showRegisterBtn = document.getElementById('show-register');
+            const showLoginBtn = document.getElementById('show-login');
+            const loginError = document.getElementById('login-error');
+            const registerError = document.getElementById('register-error');
+
+            // --- CRASH ELEMENTS ---
+            const crashMultiplierEl = document.getElementById('crash-multiplier');
+            const crashStatusEl = document.getElementById('crash-status');
+            const crashBetInput = document.getElementById('crash-bet-amount');
+            const crashAutoCashoutInput = document.getElementById('crash-auto-cashout');
+            const crashActionButton = document.getElementById('crash-action-button');
+            const crashError = document.getElementById('crash-error');
+            
+            // --- MINES ELEMENTS ---
+            const minesBetInput = document.getElementById('mines-bet-amount');
+            const minesCountInput = document.getElementById('mines-count');
+            const minesActionButton = document.getElementById('mines-action-button');
+            const minesGrid = document.getElementById('mines-grid');
+            const minesGemsFound = document.getElementById('mines-gems-found');
+            const minesNextMultiplier = document.getElementById('mines-next-multiplier');
+            const minesError = document.getElementById('mines-error');
+            
+            // --- WALLET ELEMENTS ---
+            const addFundsButton = document.getElementById('add-funds-button');
+
+            // --- HELPER FUNCTIONS ---
+            const saveData = () => {
+                localStorage.setItem('nexusArcadeUsers', JSON.stringify(state.users));
+                localStorage.setItem('nexusArcadeCurrentUser', state.currentUser);
+            };
+
+
+            const loadData = () => {
+                const users = localStorage.getItem('nexusArcadeUsers');
+                const currentUser = localStorage.getItem('nexusArcadeCurrentUser');
+                if (users) {
+                    state.users = JSON.parse(users);
                 }
-            }
-            
-            // Crash logic: probability increases with the multiplier
-            const crashProbability = 0.005 + (0.005 * (multiplier / 5)); // Base chance + growing chance
-            if (Math.random() < crashProbability) {
-                crashGame();
-            }
-        };
+                if (currentUser && state.users[currentUser]) {
+                    state.currentUser = currentUser;
+                    showView('app');
+                    setActiveGame('crash-game-view');
+                } else {
+                    showView('login');
+                }
+            };
 
-        const crashGame = () => {
-            clearInterval(gameInterval);
-            isGameRunning = false;
-            setGameStatus(`Crashed @ ${multiplier.toFixed(2)}x`, '--accent-red');
-            progressLine.style.height = '100%';
-            progressLine.style.background = 'var(--accent-red)';
+            const showView = (viewId) => {
+                Object.values(views).forEach(v => v.classList.add('hidden'));
+                if (views[viewId]) views[viewId].classList.remove('hidden');
+            };
             
-            if (isBetPlaced) {
-                // Player lost
-                setGameStatus(`You lost! Crashed @ ${multiplier.toFixed(2)}x`, '--accent-red');
-                isBetPlaced = false;
-            }
-            
-            addHistoryItem(multiplier, false);
-            
-            setTimeout(startCountdown, 3000);
-        };
-        
-        const placeBet = () => {
-            const betAmount = parseFloat(betAmountInput.value);
-            if (isNaN(betAmount) || betAmount <= 0) {
-                alert("Please enter a valid bet amount.");
-                return;
-            }
-            if (betAmount > balance) {
-                alert("Bet amount cannot exceed your balance.");
-                return;
-            }
-            if (isGameRunning) {
-                alert("Cannot place bet while a round is in progress.");
-                return;
-            }
+            const setActiveGame = (viewId) => {
+                document.querySelectorAll('.game-view').forEach(v => v.classList.add('hidden'));
+                document.getElementById(viewId).classList.remove('hidden');
+                
+                navItems.forEach(item => {
+                    item.classList.toggle('active', item.dataset.view === viewId);
+                });
+                
+                // Stop any running games when switching
+                if (state.games.crash.running) {
+                    clearInterval(state.games.crash.interval);
+                    initCrashGame(); // Reset it
+                }
+                if (state.games.mines.active) {
+                    endMinesGame(false, false); // End without win/loss message
+                }
+            };
 
-            balance -= betAmount;
-            updateBalanceDisplay();
-            isBetPlaced = true;
-            actionButton.disabled = true;
-            setGameStatus('Bet placed! Waiting for next round...');
-        };
+            const updateBalance = (amount) => {
+                state.users[state.currentUser].balance += amount;
+                updateDisplays();
+                saveData();
+            };
 
-        const cashOut = () => {
-            if (!isBetPlaced) return;
-            
-            const betAmount = parseFloat(betAmountInput.value);
-            const winnings = betAmount * multiplier;
-            balance += winnings;
-            updateBalanceDisplay();
-            
-            setGameStatus(`Cashed out @ ${multiplier.toFixed(2)}x! You won ${winnings.toFixed(2)}`, '--accent-primary');
-            actionButton.disabled = true;
-            isBetPlaced = false;
-        };
+            const updateDisplays = () => {
+                const user = state.users[state.currentUser];
+                if(user) {
+                    usernameDisplay.textContent = user.username;
+                    const formattedBalance = `$${user.balance.toFixed(2)}`;
+                    balanceDisplay.textContent = formattedBalance;
+                    walletBalanceLarge.textContent = formattedBalance;
+                }
+            };
 
-        const addHistoryItem = (crashPoint, wasWin) => {
-            const item = document.createElement('li');
-            item.className = 'history-item';
+            // --- AUTHENTICATION LOGIC ---
+            showRegisterBtn.addEventListener('click', () => showView('register'));
+            showLoginBtn.addEventListener('click', () => showView('login'));
             
-            const multiplierSpan = document.createElement('span');
-            multiplierSpan.textContent = `${crashPoint.toFixed(2)}x`;
-            multiplierSpan.className = 'history-multiplier';
-            multiplierSpan.classList.add(crashPoint > 1.5 ? 'win' : 'loss'); // Simple win/loss coloring
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const password = document.getElementById('register-password').value;
+                registerError.textContent = '';
+                
+                if (state.users[username]) {
+                    registerError.textContent = 'Username already exists.';
+                    return;
+                }
+                
+                state.users[username] = { username, password, balance: 100.00 };
+                state.currentUser = username;
+                saveData();
+                showView('app');
+                setActiveGame('crash-game-view');
+                updateDisplays();
+            });
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+                loginError.textContent = '';
+                
+                const user = state.users[username];
+                if (!user || user.password !== password) {
+                    loginError.textContent = 'Invalid username or password.';
+                    return;
+                }
+                
+                state.currentUser = username;
+                saveData();
+                showView('app');
+                setActiveGame('crash-game-view');
+                updateDisplays();
+            });
             
-            const timeSpan = document.createElement('span');
-            timeSpan.textContent = new Date().toLocaleTimeString();
-            timeSpan.className = 'history-time';
+            logoutButton.addEventListener('click', () => {
+                state.currentUser = null;
+                localStorage.removeItem('nexusArcadeCurrentUser');
+                showView('login');
+                // Optional: reload to clear all state cleanly
+                // window.location.reload(); 
+            });
+
+            // --- NAVIGATION ---
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const viewId = item.dataset.view;
+                    if(viewId) setActiveGame(viewId);
+                });
+            });
+
+            // --- WALLET LOGIC ---
+            addFundsButton.addEventListener('click', () => {
+                updateBalance(100);
+                alert("You've added $100 in simulated funds to your account.");
+            });
+
+            // --- CRASH GAME LOGIC ---
+            const initCrashGame = () => {
+                state.games.crash = { running: false, betPlaced: false, multiplier: 1.0, interval: null };
+                crashMultiplierEl.textContent = '1.00x';
+                crashMultiplierEl.style.color = 'var(--text-primary)';
+                crashStatusEl.textContent = 'Starting round...';
+                crashActionButton.textContent = 'Place Bet';
+                crashActionButton.disabled = false;
+                crashActionButton.classList.remove('cashout-btn');
+                crashError.textContent = '';
+                
+                setTimeout(startCrashGame, 3000); // Countdown
+            };
             
-            item.appendChild(multiplierSpan);
-            item.appendChild(timeSpan);
+            const startCrashGame = () => {
+                state.games.crash.running = true;
+                state.games.crash.multiplier = 1.0;
+                crashStatusEl.textContent = 'Good Luck!';
+
+                if (state.games.crash.betPlaced) {
+                    crashActionButton.textContent = `Cash Out @ 1.00x`;
+                    crashActionButton.disabled = false;
+                    crashActionButton.style.backgroundColor = 'var(--accent-yellow)';
+                } else {
+                    crashActionButton.disabled = true;
+                }
+
+                state.games.crash.interval = setInterval(crashTick, 100);
+            };
+
+            const crashTick = () => {
+                const { crash } = state.games;
+                const growth = 0.0005 * crash.multiplier;
+                crash.multiplier += growth;
+                crashMultiplierEl.textContent = `${crash.multiplier.toFixed(2)}x`;
+                
+                if (crash.betPlaced) {
+                    crashActionButton.textContent = `Cash Out @ ${crash.multiplier.toFixed(2)}x`;
+                    const autoCashout = parseFloat(crashAutoCashoutInput.value);
+                    if (autoCashout && crash.multiplier >= autoCashout) {
+                        handleCrashCashout();
+                    }
+                }
+                
+                const crashProb = 0.005 + (0.005 * (crash.multiplier / 5));
+                if (Math.random() < crashProb) {
+                    endCrashGame();
+                }
+            };
+
+            const endCrashGame = () => {
+                clearInterval(state.games.crash.interval);
+                state.games.crash.running = false;
+                crashMultiplierEl.style.color = 'var(--accent-red)';
+                crashStatusEl.textContent = `Crashed @ ${state.games.crash.multiplier.toFixed(2)}x`;
+                
+                if (state.games.crash.betPlaced) {
+                    crashError.textContent = "You lost your bet!";
+                }
+                state.games.crash.betPlaced = false;
+                initCrashGame(); // Start next round countdown
+            };
             
-            historyList.prepend(item);
+            const handleCrashBet = () => {
+                const bet = parseFloat(crashBetInput.value);
+                if (bet > state.users[state.currentUser].balance) {
+                    crashError.textContent = "Insufficient balance."; return;
+                }
+                updateBalance(-bet);
+                state.games.crash.betPlaced = true;
+                crashActionButton.disabled = true;
+                crashStatusEl.textContent = "Bet placed for next round!";
+            };
             
-            // Limit history to 20 items
-            if (historyList.children.length > 20) {
-                historyList.lastChild.remove();
-            }
-        };
-        
-        // --- Event Listeners ---
-        actionButton.addEventListener('click', () => {
-            if (isGameRunning && isBetPlaced) {
-                cashOut();
-            } else {
-                placeBet();
-            }
+            const handleCrashCashout = () => {
+                const bet = parseFloat(crashBetInput.value);
+                const winnings = bet * state.games.crash.multiplier;
+                updateBalance(winnings);
+                
+                crashStatusEl.textContent = `Cashed out for $${winnings.toFixed(2)}!`;
+                state.games.crash.betPlaced = false;
+                crashActionButton.disabled = true;
+            };
+
+            crashActionButton.addEventListener('click', () => {
+                crashError.textContent = '';
+                if (state.games.crash.running && state.games.crash.betPlaced) {
+                    handleCrashCashout();
+                } else if (!state.games.crash.running && !state.games.crash.betPlaced) {
+                    handleCrashBet();
+                }
+            });
+            
+            // --- MINES GAME LOGIC ---
+            const minesMultipliers = [
+              1.03, 1.08, 1.13, 1.19, 1.25, 1.32, 1.39, 1.47, 1.56, 1.67, 1.79, 1.92, 2.08,
+              2.27, 2.5, 2.78, 3.13, 3.57, 4.17, 5, 6.25, 8.33, 12.5, 25, 50
+            ]; // Precomputed multipliers for 3 mines
+
+            const startMinesGame = () => {
+                const bet = parseFloat(minesBetInput.value);
+                const mineCount = parseInt(minesCountInput.value);
+                
+                if(bet > state.users[state.currentUser].balance) {
+                    minesError.textContent = "Insufficient balance."; return;
+                }
+                if(mineCount < 1 || mineCount > 24) {
+                    minesError.textContent = "Mines must be between 1 and 24."; return;
+                }
+                
+                updateBalance(-bet);
+                
+                state.games.mines = {
+                    active: true, board: [], bet, mineCount, revealedCount: 0, currentMultiplier: 1.0
+                };
+                
+                // Generate board
+                state.games.mines.board = Array(25).fill('gem');
+                let minesPlaced = 0;
+                while (minesPlaced < mineCount) {
+                    const pos = Math.floor(Math.random() * 25);
+                    if (state.games.mines.board[pos] !== 'mine') {
+                        state.games.mines.board[pos] = 'mine';
+                        minesPlaced++;
+                    }
+                }
+                
+                renderMinesGrid();
+                minesActionButton.textContent = 'Cash Out';
+                minesActionButton.style.backgroundColor = 'var(--accent-yellow)';
+                minesBetInput.disabled = true;
+                minesCountInput.disabled = true;
+                minesError.textContent = '';
+            };
+            
+            const renderMinesGrid = () => {
+                minesGrid.innerHTML = '';
+                for (let i = 0; i < 25; i++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'mine-tile';
+                    tile.dataset.index = i;
+                    tile.addEventListener('click', () => handleMineTileClick(i));
+                    minesGrid.appendChild(tile);
+                }
+            };
+            
+            const handleMineTileClick = (index) => {
+                const { mines } = state.games;
+                if (!mines.active) return;
+                
+                const tileEl = minesGrid.children[index];
+                if (tileEl.classList.contains('revealed')) return;
+
+                if (mines.board[index] === 'mine') {
+                    tileEl.classList.add('revealed', 'mine');
+                    tileEl.innerHTML = '💣';
+                    endMinesGame(false, true); // It's a loss
+                } else {
+                    tileEl.classList.add('revealed', 'gem');
+                    tileEl.innerHTML = '💎';
+                    mines.revealedCount++;
+                    
+                    // Simple multiplier calculation
+                    mines.currentMultiplier = minesMultipliers[mines.revealedCount-1] || 50;
+                    
+                    minesGemsFound.textContent = mines.revealedCount;
+                    minesNextMultiplier.textContent = `${(minesMultipliers[mines.revealedCount] || 50).toFixed(2)}x`;
+                    
+                    const potentialWinnings = mines.bet * mines.currentMultiplier;
+                    minesActionButton.textContent = `Cash Out $${potentialWinnings.toFixed(2)}`;
+
+                    if (mines.revealedCount === (25 - mines.mineCount)) {
+                        endMinesGame(true, true); // All gems found, auto-win
+                    }
+                }
+            };
+            
+            const endMinesGame = (isWin, showMessage) => {
+                const { mines } = state.games;
+                if (!mines.active) return;
+                
+                if (isWin) {
+                    const winnings = mines.bet * mines.currentMultiplier;
+                    updateBalance(winnings);
+                    if(showMessage) minesError.textContent = `You won $${winnings.toFixed(2)}!`;
+                } else {
+                    if(showMessage) minesError.textContent = 'You hit a mine! Game over.';
+                    // Reveal all mines
+                    for(let i=0; i<25; i++) {
+                        if (mines.board[i] === 'mine') {
+                            const tile = minesGrid.children[i];
+                            tile.classList.add('revealed', 'mine');
+                            tile.innerHTML = '💣';
+                        }
+                    }
+                }
+                
+                state.games.mines.active = false;
+                minesActionButton.textContent = 'Start Game';
+                minesActionButton.style.backgroundColor = 'var(--accent-green)';
+                minesBetInput.disabled = false;
+                minesCountInput.disabled = false;
+                minesGemsFound.textContent = 0;
+                minesNextMultiplier.textContent = `${minesMultipliers[0]}x`
+            };
+            
+            minesActionButton.addEventListener('click', () => {
+                minesError.textContent = '';
+                if(state.games.mines.active) {
+                    endMinesGame(true, true); // Cash out
+                } else {
+                    startMinesGame();
+                }
+            });
+
+            // --- INITIALIZATION ---
+            const init = () => {
+                loadData();
+                if (state.currentUser) {
+                    updateDisplays();
+                    initCrashGame(); // Start the crash game loop
+                }
+            };
+
+            init();
         });
-
-        addFundsButton.addEventListener('click', () => {
-            if (balance < 1) {
-                balance += 100;
-                updateBalanceDisplay();
-                actionButton.disabled = false;
-            }
-        });
-        
-        // --- Initial Load ---
-        updateBalanceDisplay();
-        startCountdown();
-    });
     </script>
 </body>
 </html>
