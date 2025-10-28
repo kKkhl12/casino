@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vegas Luck Online - Fun Slots!</title>
+    
+    <style>
+        /* --- Global Styles & Theme --- */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Staatliches&display=swap');
+
+        :root {
+            --bg-color: #1a1a1a;
+            --primary-color: #2c2c2c;
+            --accent-color: #ffd700; /* Gold */
+            --text-color: #f0f0f0;
+            --win-color: #4CAF50; /* Green */
+            --lose-color: #F44336; /* Red */
+            --button-color: #007BFF;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- Main Container --- */
+        .container {
+            background-color: var(--primary-color);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.1);
+            border: 2px solid var(--accent-color);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        header h1 {
+            font-family: 'Staatliches', cursive;
+            color: var(--accent-color);
+            font-size: 3rem;
+            margin: 0 0 1rem 0;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            letter-spacing: 2px;
+        }
+
+        /* --- Balance & Messages --- */
+        .balance-info {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+
+        #balance {
+            color: var(--win-color);
+            transition: color 0.3s;
+        }
+
+        #message {
+            font-size: 1.2rem;
+            font-weight: bold;
+            height: 25px;
+            margin: 1rem 0;
+            transition: color 0.3s;
+        }
+
+        .win-message { color: var(--win-color); }
+        .lose-message { color: var(--lose-color); }
+
+        /* --- Slot Machine --- */
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+            padding: 20px;
+            background: #111;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .reel {
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0;
+            border: 3px solid #333;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .reel.win-highlight {
+            animation: win-pulse 0.8s infinite;
+        }
+        
+        @keyframes win-pulse {
+            0% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 0px var(--accent-color); }
+            50% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 20px var(--accent-color); }
+            100% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 0px var(--accent-color); }
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .bet-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+
+        #bet-amount {
+            width: 80px;
+            padding: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+            border: 2px solid #555;
+            background-color: #333;
+            color: var(--text-color);
+            border-radius: 5px;
+            -moz-appearance: textfield; /* Firefox */
+        }
+        #bet-amount::-webkit-outer-spin-button,
+        #bet-amount::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .spin-button {
+            font-family: 'Staatliches', cursive;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(145deg, #0088ff, #0055cc);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .spin-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.6);
+        }
+
+        .spin-button:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .spin-button:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        #add-funds-button {
+            background: var(--win-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            display: none; /* Initially hidden */
+        }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--lose-color);
+            border-radius: 8px;
+            max-width: 90%;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+        
+        footer strong {
+            color: var(--lose-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Vegas Luck Online</h1>
+        </header>
+
+        <main>
+            <p class="balance-info">Your Balance: $<span id="balance">100</span></p>
+
+            <div class="slot-machine">
+                <div class="reel" id="reel1">🍒</div>
+                <div class="reel" id="reel2">🍋</div>
+                <div class="reel" id="reel3">🍊</div>
+            </div>
+
+            <p id="message"></p>
+
+            <div class="controls">
+                 <div class="bet-control">
+                    <label for="bet-amount">Bet Amount:</label>
+                    <input type="number" id="bet-amount" value="5" min="1">
+                </div>
+                <button class="spin-button" id="spin-button">SPIN!</button>
+                <button id="add-funds-button">Broke? Add $50</button>
+            </div>
+        </main>
+
+        <footer>
+            <p><strong>⚠️ Disclaimer:</strong> This is a simulation for entertainment purposes only. <strong>No real money is involved.</strong> Gambling can be addictive. If you or someone you know has a gambling problem, please seek help. This website does not endorse or promote real-money gambling.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const balanceElement = document.getElementById('balance');
+            const reelElements = [
+                document.getElementById('reel1'),
+                document.getElementById('reel2'),
+                document.getElementById('reel3')
+            ];
+            const messageElement = document.getElementById('message');
+            const spinButton = document.getElementById('spin-button');
+            const betAmountInput = document.getElementById('bet-amount');
+            const addFundsButton = document.getElementById('add-funds-button');
+
+            // --- Game Configuration ---
+            const symbols = [
+                { symbol: '💰', payout: 50 }, // Jackpot
+                { symbol: '💎', payout: 25 },
+                { symbol: '⭐', payout: 15 },
+                { symbol: '🍉', payout: 8 },
+                { symbol: '🍊', payout: 6 },
+                { symbol: '🍋', payout: 4 },
+                { symbol: '🍒', payout: 2 }  // Lowest
+            ];
+            const spinDuration = 2000; // 2 seconds
+            const spinInterval = 100; // ms between symbol changes
+
+            // --- Game State ---
+            let balance = 100;
+            let isSpinning = false;
+
+            // --- Game Logic ---
+            const spin = () => {
+                if (isSpinning) return;
+
+                const betAmount = parseInt(betAmountInput.value);
+
+                // Validation
+                if (isNaN(betAmount) || betAmount <= 0) {
+                    displayMessage("Please enter a valid bet.", 'lose-message');
+                    return;
+                }
+                if (betAmount > balance) {
+                    displayMessage("Bet exceeds balance!", 'lose-message');
+                    return;
+                }
+                
+                startSpin(betAmount);
+            };
+
+            const startSpin = (betAmount) => {
+                isSpinning = true;
+                spinButton.disabled = true;
+                addFundsButton.style.display = 'none';
+                clearMessage();
+                reelElements.forEach(reel => reel.classList.remove('win-highlight'));
+
+
+                balance -= betAmount;
+                updateBalanceDisplay();
+
+                let spinIntervalId = setInterval(() => {
+                    reelElements.forEach(reel => {
+                        reel.textContent = getRandomSymbol().symbol;
+                    });
+                }, spinInterval);
+                
+                setTimeout(() => {
+                    clearInterval(spinIntervalId);
+                    resolveSpin(betAmount);
+                }, spinDuration);
+            };
+
+            const resolveSpin = (betAmount) => {
+                const finalReels = reelElements.map(() => getRandomSymbol());
+                
+                reelElements.forEach((reel, index) => {
+                    reel.textContent = finalReels[index].symbol;
+                });
+                
+                calculateWinnings(finalReels, betAmount);
+
+                isSpinning = false;
+                if (balance > 0) {
+                    spinButton.disabled = false;
+                } else {
+                    displayMessage("Game Over! Add more funds to play again.", 'lose-message');
+                    addFundsButton.style.display = 'block';
+                }
+            };
+            
+            const calculateWinnings = (reels, betAmount) => {
+                const [r1, r2, r3] = reels;
+                let winnings = 0;
+                let win = false;
+
+                // Three of a kind
+                if (r1.symbol === r2.symbol && r2.symbol === r3.symbol) {
+                    winnings = betAmount * r1.payout;
+                    win = true;
+                    highlightWinningReels([0, 1, 2]);
+                } 
+                // Two cherries (a common slot machine rule)
+                else if ( (r1.symbol === '🍒' && r2.symbol === '🍒') ) {
+                     winnings = betAmount * 2; // Small win for two cherries
+                     win = true;
+                     highlightWinningReels([0, 1]);
+                }
+
+                if (win) {
+                    balance += winnings;
+                    displayMessage(`You won $${winnings}!`, 'win-message');
+                } else {
+                    displayMessage("Try again!", 'lose-message');
+                }
+                
+                updateBalanceDisplay();
+            };
+
+            const addFunds = () => {
+                if (balance <= 0) {
+                    balance = 50;
+                    updateBalanceDisplay();
+                    clearMessage();
+                    spinButton.disabled = false;
+                    addFundsButton.style.display = 'none';
+                }
+            };
+
+            // --- Helper Functions ---
+            const getRandomSymbol = () => {
+                // Weighted randomness to make jackpots rarer
+                const rand = Math.random();
+                if (rand < 0.02) return symbols[0]; // 2% chance for 💰
+                if (rand < 0.07) return symbols[1]; // 5% chance for 💎
+                if (rand < 0.15) return symbols[2]; // 8% chance for ⭐
+                if (rand < 0.30) return symbols[3]; // 15% chance for 🍉
+                if (rand < 0.50) return symbols[4]; // 20% chance for 🍊
+                if (rand < 0.75) return symbols[5]; // 25% chance for 🍋
+                return symbols[6];                 // 25% chance for 🍒
+            };
+
+            const updateBalanceDisplay = () => {
+                balanceElement.textContent = balance;
+                if (balance <= 0) {
+                    balanceElement.style.color = var(--lose-color);
+                } else {
+                    balanceElement.style.color = var(--win-color);
+                }
+                // Ensure bet amount is not higher than balance
+                betAmountInput.max = balance;
+            };
+
+            const displayMessage = (text, className) => {
+                messageElement.textContent = text;
+                messageElement.className = className;
+            };
+            
+            const clearMessage = () => {
+                messageElement.textContent = '';
+                messageElement.className = '';
+            };
+
+            const highlightWinningReels = (indices) => {
+                indices.forEach(i => reelElements[i].classList.add('win-highlight'));
+            };
+
+            // --- Event Listeners ---
+            spinButton.addEventListener('click', spin);
+            addFundsButton.addEventListener('click', addFunds);
+            
+            // --- Initial Setup ---
+            updateBalanceDisplay();
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vegas Luck Online - Fun Slots!</title>
+    
+    <style>
+        /* --- Global Styles & Theme --- */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Staatliches&display=swap');
+
+        :root {
+            --bg-color: #1a1a1a;
+            --primary-color: #2c2c2c;
+            --accent-color: #ffd700; /* Gold */
+            --text-color: #f0f0f0;
+            --win-color: #4CAF50; /* Green */
+            --lose-color: #F44336; /* Red */
+            --button-color: #007BFF;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- Main Container --- */
+        .container {
+            background-color: var(--primary-color);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.1);
+            border: 2px solid var(--accent-color);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        header h1 {
+            font-family: 'Staatliches', cursive;
+            color: var(--accent-color);
+            font-size: 3rem;
+            margin: 0 0 1rem 0;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            letter-spacing: 2px;
+        }
+
+        /* --- Balance & Messages --- */
+        .balance-info {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+
+        #balance {
+            color: var(--win-color);
+            transition: color 0.3s;
+        }
+
+        #message {
+            font-size: 1.2rem;
+            font-weight: bold;
+            height: 25px;
+            margin: 1rem 0;
+            transition: color 0.3s;
+        }
+
+        .win-message { color: var(--win-color); }
+        .lose-message { color: var(--lose-color); }
+
+        /* --- Slot Machine --- */
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+            padding: 20px;
+            background: #111;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .reel {
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0;
+            border: 3px solid #333;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .reel.win-highlight {
+            animation: win-pulse 0.8s infinite;
+        }
+        
+        @keyframes win-pulse {
+            0% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 0px var(--accent-color); }
+            50% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 20px var(--accent-color); }
+            100% { box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 0px var(--accent-color); }
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .bet-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+
+        #bet-amount {
+            width: 80px;
+            padding: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+            border: 2px solid #555;
+            background-color: #333;
+            color: var(--text-color);
+            border-radius: 5px;
+            -moz-appearance: textfield; /* Firefox */
+        }
+        #bet-amount::-webkit-outer-spin-button,
+        #bet-amount::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .spin-button {
+            font-family: 'Staatliches', cursive;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(145deg, #0088ff, #0055cc);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .spin-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.6);
+        }
+
+        .spin-button:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .spin-button:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        #add-funds-button {
+            background: var(--win-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            display: none; /* Initially hidden */
+        }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--lose-color);
+            border-radius: 8px;
+            max-width: 90%;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+        
+        footer strong {
+            color: var(--lose-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Vegas Luck Online</h1>
+        </header>
+
+        <main>
+            <p class="balance-info">Your Balance: $<span id="balance">100</span></p>
+
+            <div class="slot-machine">
+                <div class="reel" id="reel1">🍒</div>
+                <div class="reel" id="reel2">🍋</div>
+                <div class="reel" id="reel3">🍊</div>
+            </div>
+
+            <p id="message"></p>
+
+            <div class="controls">
+                 <div class="bet-control">
+                    <label for="bet-amount">Bet Amount:</label>
+                    <input type="number" id="bet-amount" value="5" min="1">
+                </div>
+                <button class="spin-button" id="spin-button">SPIN!</button>
+                <button id="add-funds-button">Broke? Add $50</button>
+            </div>
+        </main>
+
+        <footer>
+            <p><strong>⚠️ Disclaimer:</strong> This is a simulation for entertainment purposes only. <strong>No real money is involved.</strong> Gambling can be addictive. If you or someone you know has a gambling problem, please seek help. This website does not endorse or promote real-money gambling.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const balanceElement = document.getElementById('balance');
+            const reelElements = [
+                document.getElementById('reel1'),
+                document.getElementById('reel2'),
+                document.getElementById('reel3')
+            ];
+            const messageElement = document.getElementById('message');
+            const spinButton = document.getElementById('spin-button');
+            const betAmountInput = document.getElementById('bet-amount');
+            const addFundsButton = document.getElementById('add-funds-button');
+
+            // --- Game Configuration ---
+            const symbols = [
+                { symbol: '💰', payout: 50 }, // Jackpot
+                { symbol: '💎', payout: 25 },
+                { symbol: '⭐', payout: 15 },
+                { symbol: '🍉', payout: 8 },
+                { symbol: '🍊', payout: 6 },
+                { symbol: '🍋', payout: 4 },
+                { symbol: '🍒', payout: 2 }  // Lowest
+            ];
+            const spinDuration = 2000; // 2 seconds
+            const spinInterval = 100; // ms between symbol changes
+
+            // --- Game State ---
+            let balance = 100;
+            let isSpinning = false;
+
+            // --- Game Logic ---
+            const spin = () => {
+                if (isSpinning) return;
+
+                const betAmount = parseInt(betAmountInput.value);
+
+                // Validation
+                if (isNaN(betAmount) || betAmount <= 0) {
+                    displayMessage("Please enter a valid bet.", 'lose-message');
+                    return;
+                }
+                if (betAmount > balance) {
+                    displayMessage("Bet exceeds balance!", 'lose-message');
+                    return;
+                }
+                
+                startSpin(betAmount);
+            };
+
+            const startSpin = (betAmount) => {
+                isSpinning = true;
+                spinButton.disabled = true;
+                addFundsButton.style.display = 'none';
+                clearMessage();
+                reelElements.forEach(reel => reel.classList.remove('win-highlight'));
+
+
+                balance -= betAmount;
+                updateBalanceDisplay();
+
+                let spinIntervalId = setInterval(() => {
+                    reelElements.forEach(reel => {
+                        reel.textContent = getRandomSymbol().symbol;
+                    });
+                }, spinInterval);
+                
+                setTimeout(() => {
+                    clearInterval(spinIntervalId);
+                    resolveSpin(betAmount);
+                }, spinDuration);
+            };
+
+            const resolveSpin = (betAmount) => {
+                const finalReels = reelElements.map(() => getRandomSymbol());
+                
+                reelElements.forEach((reel, index) => {
+                    reel.textContent = finalReels[index].symbol;
+                });
+                
+                calculateWinnings(finalReels, betAmount);
+
+                isSpinning = false;
+                if (balance > 0) {
+                    spinButton.disabled = false;
+                } else {
+                    displayMessage("Game Over! Add more funds to play again.", 'lose-message');
+                    addFundsButton.style.display = 'block';
+                }
+            };
+            
+            const calculateWinnings = (reels, betAmount) => {
+                const [r1, r2, r3] = reels;
+                let winnings = 0;
+                let win = false;
+
+                // Three of a kind
+                if (r1.symbol === r2.symbol && r2.symbol === r3.symbol) {
+                    winnings = betAmount * r1.payout;
+                    win = true;
+                    highlightWinningReels([0, 1, 2]);
+                } 
+                // Two cherries (a common slot machine rule)
+                else if ( (r1.symbol === '🍒' && r2.symbol === '🍒') ) {
+                     winnings = betAmount * 2; // Small win for two cherries
+                     win = true;
+                     highlightWinningReels([0, 1]);
+                }
+
+                if (win) {
+                    balance += winnings;
+                    displayMessage(`You won $${winnings}!`, 'win-message');
+                } else {
+                    displayMessage("Try again!", 'lose-message');
+                }
+                
+                updateBalanceDisplay();
+            };
+
+            const addFunds = () => {
+                if (balance <= 0) {
+                    balance = 50;
+                    updateBalanceDisplay();
+                    clearMessage();
+                    spinButton.disabled = false;
+                    addFundsButton.style.display = 'none';
+                }
+            };
+
+            // --- Helper Functions ---
+            const getRandomSymbol = () => {
+                // Weighted randomness to make jackpots rarer
+                const rand = Math.random();
+                if (rand < 0.02) return symbols[0]; // 2% chance for 💰
+                if (rand < 0.07) return symbols[1]; // 5% chance for 💎
+                if (rand < 0.15) return symbols[2]; // 8% chance for ⭐
+                if (rand < 0.30) return symbols[3]; // 15% chance for 🍉
+                if (rand < 0.50) return symbols[4]; // 20% chance for 🍊
+                if (rand < 0.75) return symbols[5]; // 25% chance for 🍋
+                return symbols[6];                 // 25% chance for 🍒
+            };
+
+            const updateBalanceDisplay = () => {
+                balanceElement.textContent = balance;
+                if (balance <= 0) {
+                    balanceElement.style.color = var(--lose-color);
+                } else {
+                    balanceElement.style.color = var(--win-color);
+                }
+                // Ensure bet amount is not higher than balance
+                betAmountInput.max = balance;
+            };
+
+            const displayMessage = (text, className) => {
+                messageElement.textContent = text;
+                messageElement.className = className;
+            };
+            
+            const clearMessage = () => {
+                messageElement.textContent = '';
+                messageElement.className = '';
+            };
+
+            const highlightWinningReels = (indices) => {
+                indices.forEach(i => reelElements[i].classList.add('win-highlight'));
+            };
+
+            // --- Event Listeners ---
+            spinButton.addEventListener('click', spin);
+            addFundsButton.addEventListener('click', addFunds);
+            
+            // --- Initial Setup ---
+            updateBalanceDisplay();
+        });
+    </script>
+</body>
+</html>
