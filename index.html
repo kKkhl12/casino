@@ -11,25 +11,38 @@
 </head>
 <body>
 
-    <!-- Loading Screen -->
     <div id="loader-wrapper">
         <div class="loader-text">Hex Casino</div>
         <div class="spinner"></div>
         <div class="loader-disclaimer">SIMULATION ONLY - NO REAL MONEY</div>
     </div>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal-container hidden">
+    <!-- Auth Modal Container -->
+    <div id="auth-modal" class="modal-container hidden">
         <div class="modal-content">
-            <h2>Welcome to Hex Casino</h2>
-            <p>Please enter a username to begin.</p>
-            <input type="text" id="username-input" placeholder="Username">
-            <button id="login-button" class="btn btn-brand">Enter Simulation</button>
+            <div id="login-view">
+                <h2>Welcome Back</h2>
+                <p>Please log in to continue.</p>
+                <input type="text" id="login-username" placeholder="Username" autocomplete="username">
+                <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+                <button id="login-button" class="btn btn-brand">Log In</button>
+                <p class="auth-switch">Don't have an account? <a href="#" id="show-register">Sign up</a></p>
+            </div>
+            <div id="register-view" class="hidden">
+                <h2>Create Account</h2>
+                <p>Join the fun at Hex Casino.</p>
+                <input type="text" id="register-username" placeholder="Username" autocomplete="username">
+                <input type="password" id="register-password" placeholder="Password" autocomplete="new-password">
+                <button id="register-button" class="btn btn-brand">Sign Up</button>
+                <p class="auth-switch">Already have an account? <a href="#" id="show-login">Log in</a></p>
+            </div>
+            <p id="auth-error" class="modal-error hidden"></p>
             <p class="modal-disclaimer">⚠️ This is a simulation. No real money is used or won.</p>
         </div>
     </div>
     
-    <!-- Admin Panel Modal -->
+    <!-- (The rest of your HTML is mostly the same, so I'm omitting it for brevity) -->
+    <!-- ... paste the rest of your original index.html from <div id="admin-modal"> onwards ... -->
     <div id="admin-modal" class="modal-container hidden">
         <div class="modal-content">
             <span class="modal-close" id="admin-close-btn">&times;</span>
