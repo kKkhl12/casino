@@ -35,8 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const authError = document.getElementById('auth-error');
 
 
-    // --- WebSocket Connection ---
-    const ws = new WebSocket(`ws://${window.location.host}`);
+// This is the NEW, correct code
+const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const ws = new WebSocket(`${protocol}//${window.location.host}`);
 
     ws.onopen = () => {
         console.log('Connected to the server.');
