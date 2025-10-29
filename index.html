@@ -3,575 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gambling Site Simulator</title>
-    <style>
-        /* --- Global Styles & Theme --- */
-        :root {
-            --bg-primary: #1a202c;
-            --bg-secondary: #2d3748;
-            --bg-tertiary: #4a5568;
-            --text-primary: #edf2f7;
-            --text-secondary: #a0aec0;
-            --accent-gold: #f6e05e;
-            --accent-green: #48bb78;
-            --accent-red: #f56565;
-            --border-color: #4a5568;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* --- Header & Balance --- */
-        .header {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .header h1 {
-            color: var(--accent-gold);
-            margin: 0;
-        }
-
-        #balance-display {
-            font-size: 1.5em;
-            font-weight: bold;
-            background-color: var(--bg-secondary);
-            padding: 10px 20px;
-            border-radius: 8px;
-        }
-
-        /* --- BIG FAT DISCLAIMER --- */
-        .disclaimer {
-            background-color: var(--accent-gold);
-            color: var(--bg-primary);
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 1200px;
-            box-sizing: border-box;
-        }
-
-        /* --- Main Content Area --- */
-        .main-content {
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .game-area {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* --- Game Card Styling --- */
-        .game-card {
-            background-color: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .game-card h2 {
-            margin-top: 0;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        /* --- Controls (Inputs & Buttons) --- */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .bet-input {
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 1em;
-            width: 150px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: transform 0.1s ease, background-color 0.2s;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-            transform: none;
-        }
-
-        .btn-green { background-color: var(--accent-green); color: var(--bg-primary); }
-        .btn-red { background-color: var(--accent-red); color: var(--bg-primary); }
-        .btn-blue { background-color: #4299e1; color: var(--bg-primary); }
-        .btn-gold { background-color: var(--accent-gold); color: var(--bg-primary); }
-
-
-        /* --- Game Specific Styles --- */
-        
-        /* Coinflip */
-        #coin {
-            width: 100px;
-            height: 100px;
-            margin: 20px auto;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 1s;
-        }
-        #coin div {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            backface-visibility: hidden;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-            font-weight: bold;
-        }
-        .coin-heads { background-color: var(--accent-gold); color: var(--bg-primary); transform: translateZ(2px); }
-        .coin-tails { background-color: var(--text-secondary); color: var(--bg-primary); transform: rotateY(180deg) translateZ(2px); }
-        .flipping { transform: rotateY(1800deg); } /* 5 full spins */
-
-        /* Crash */
-        #crash-chart {
-            background-color: var(--bg-tertiary);
-            height: 250px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 4em;
-            font-weight: bold;
-            transition: background-color 0.5s;
-        }
-        
-        #crash-multiplier { z-index: 2; }
-        
-        #crash-chart.crashed {
-            background-color: var(--accent-red);
-        }
-
-        /* Dice */
-        #dice-slider-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        #dice-slider {
-            flex-grow: 1;
-        }
-        #dice-info {
-            min-width: 200px;
-            text-align: center;
-        }
-        #dice-result-display {
-            font-size: 3em;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-            height: 60px;
-        }
-
-
-        /* --- Game History Sidebar --- */
-        .history-panel {
-            background-color: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 20px;
-            height: fit-content;
-        }
-
-        .history-panel h3 {
-            margin-top: 0;
-        }
-
-        #game-history-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        #game-history-list li {
-            padding: 8px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #game-history-list li:last-child {
-            border-bottom: none;
-        }
-
-        .history-win { color: var(--accent-green); }
-        .history-loss { color: var(--accent-red); }
-
-        /* --- Utility & Animation --- */
-        .result-message {
-            height: 24px;
-            margin-top: 15px;
-            font-weight: bold;
-            text-align: center;
-        }
-    </style>
+    <title>GambleSim Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="header">
-        <h1>SimuStake</h1>
-        <div id="balance-display">$1,000.00</div>
+    <!-- Loading Screen -->
+    <div id="loader-wrapper">
+        <div class="loader-text">GambleSim Pro</div>
+        <div class="spinner"></div>
+        <div class="loader-disclaimer">SIMULATION ONLY - NO REAL MONEY</div>
     </div>
 
-    <div class="disclaimer">
-        ⚠️ THIS IS A SIMULATION. NO REAL MONEY IS INVOLVED. This is for educational and entertainment purposes only.
-    </div>
-
-    <div class="main-content">
-        <div class="game-area">
-            <!-- Coinflip Game -->
-            <div class="game-card">
-                <h2>🪙 Coinflip</h2>
-                <div class="controls">
-                    <input type="number" id="coinflip-bet" class="bet-input" placeholder="Bet amount" value="10">
-                    <button class="btn btn-gold" id="coinflip-heads-btn">Bet Heads</button>
-                    <button class="btn btn-blue" id="coinflip-tails-btn">Bet Tails</button>
-                </div>
-                <div id="coin">
-                    <div class="coin-heads">H</div>
-                    <div class="coin-tails">T</div>
-                </div>
-                <div class="result-message" id="coinflip-result">Choose heads or tails to start!</div>
-            </div>
-
-            <!-- Crash Game -->
-            <div class="game-card">
-                <h2>🚀 Crash</h2>
-                <div class="controls">
-                    <input type="number" id="crash-bet" class="bet-input" placeholder="Bet amount" value="50">
-                    <button class="btn btn-green" id="crash-start-btn">Start & Bet</button>
-                    <button class="btn btn-red" id="crash-cashout-btn" disabled>Cash Out</button>
-                </div>
-                <div id="crash-chart">
-                    <span id="crash-multiplier">1.00x</span>
-                </div>
-                <div class="result-message" id="crash-result">Place a bet and start the game!</div>
-            </div>
-            
-            <!-- Dice Game -->
-            <div class="game-card">
-                <h2>🎲 Dice</h2>
-                 <div class="controls">
-                    <input type="number" id="dice-bet" class="bet-input" placeholder="Bet amount" value="20">
-                    <button class="btn btn-green" id="dice-over-btn">Roll Over</button>
-                    <button class="btn btn-red" id="dice-under-btn">Roll Under</button>
-                </div>
-                <div id="dice-slider-container">
-                    <span>0</span>
-                    <input type="range" min="1" max="99" value="50" class="slider" id="dice-slider">
-                    <span>100</span>
-                </div>
-                <div id="dice-info">
-                    Target: 50.00 | Payout: 1.98x
-                </div>
-                <div id="dice-result-display"></div>
-                <div class="result-message" id="dice-result"></div>
-            </div>
-
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal-container hidden">
+        <div class="modal-content">
+            <h2>Welcome to GambleSim Pro</h2>
+            <p>Please enter a username to begin.</p>
+            <input type="text" id="username-input" placeholder="Username">
+            <button id="login-button" class="btn btn-brand">Enter Simulation</button>
+            <p class="modal-disclaimer">⚠️ This is a simulation. No real money is used or won.</p>
         </div>
+    </div>
+    
+    <!-- Admin Panel Modal -->
+    <div id="admin-modal" class="modal-container hidden">
+        <div class="modal-content">
+            <span class="modal-close" id="admin-close-btn">&times;</span>
+            <h2>👑 Admin Panel</h2>
+            <p>Welcome, hexeriss. You have access to special commands.</p>
+            <div class="admin-controls">
+                <label for="set-balance-input">Set User Balance:</label>
+                <input type="number" id="set-balance-input" placeholder="e.g., 5000">
+                <button id="set-balance-btn" class="btn btn-brand">Set Balance</button>
+            </div>
+             <div class="admin-controls">
+                <label for="admin-message-input">Send Global Message:</label>
+                <input type="text" id="admin-message-input" placeholder="Your message here...">
+                <button id="admin-send-msg-btn" class="btn btn-brand">Send</button>
+            </div>
+        </div>
+    </div>
 
-        <div class="history-panel">
-            <h3>Recent Plays</h3>
-            <ul id="game-history-list">
-                <!-- History items will be added here by JS -->
+
+    <!-- Main Application Wrapper -->
+    <div id="app-wrapper" class="hidden">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                GSP
+            </div>
+            <ul class="nav-links">
+                <li class="nav-link active" data-view="crash-view">🚀 <span>Crash</span></li>
+                <li class="nav-link" data-view="roulette-view">🎡 <span>Roulette</span></li>
+                <li class="nav-link" data-view="mines-view">💣 <span>Mines</span></li>
+                <li class="nav-link" data-view="towers-view">🗼 <span>Towers</span></li>
+                <li class="nav-link" data-view="cases-view">📦 <span>Case Battles</span></li>
+                <li class="nav-link" data-view="slots-view">🎰 <span>Slots</span></li>
+                <li class="nav-link" data-view="blackjack-view">🃏 <span>Blackjack</span></li>
+                <li class="nav-link" data-view="plinko-view">💧 <span>Plinko</span></li>
+                <li class="nav-link" data-view="coinflip-view">🪙 <span>Coinflip</span></li>
             </ul>
-        </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div id="active-game-title">Crash</div>
+                <div class="user-info">
+                    <span id="username-display"></span>
+                    <div id="balance-display" class="balance">$1,000.00</div>
+                    <button id="admin-panel-btn" class="btn btn-sm btn-gold hidden">👑</button>
+                    <button id="logout-button" class="btn btn-sm btn-danger">Logout</button>
+                </div>
+            </header>
+
+            <!-- Game Views Container -->
+            <div class="game-views">
+                <!-- All game views will be injected here by JS for organization -->
+            </div>
+        </main>
+        
+        <!-- Chat Panel -->
+        <aside class="chat-panel">
+            <h3>Public Chat</h3>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Chat messages go here -->
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Say something...">
+                <button id="chat-send-btn">Send</button>
+            </div>
+        </aside>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-
-        // --- GLOBAL STATE & CONFIG ---
-        let balance = 1000.00;
-        let isGameRunning = false;
-        const HOUSE_EDGE_MULTIPLIER = 0.99; // 1% house edge on wins (payout is 99% of true odds)
-
-        // --- DOM ELEMENTS ---
-        const balanceDisplay = document.getElementById('balance-display');
-        const gameHistoryList = document.getElementById('game-history-list');
-
-        // Coinflip Elements
-        const coinflipBetInput = document.getElementById('coinflip-bet');
-        const coinflipHeadsBtn = document.getElementById('coinflip-heads-btn');
-        const coinflipTailsBtn = document.getElementById('coinflip-tails-btn');
-        const coinElement = document.getElementById('coin');
-        const coinflipResult = document.getElementById('coinflip-result');
-        
-        // Crash Elements
-        const crashBetInput = document.getElementById('crash-bet');
-        const crashStartBtn = document.getElementById('crash-start-btn');
-        const crashCashoutBtn = document.getElementById('crash-cashout-btn');
-        const crashChart = document.getElementById('crash-chart');
-        const crashMultiplierDisplay = document.getElementById('crash-multiplier');
-        const crashResult = document.getElementById('crash-result');
-
-        // Dice Elements
-        const diceBetInput = document.getElementById('dice-bet');
-        const diceOverBtn = document.getElementById('dice-over-btn');
-        const diceUnderBtn = document.getElementById('dice-under-btn');
-        const diceSlider = document.getElementById('dice-slider');
-        const diceInfo = document.getElementById('dice-info');
-        const diceResultDisplay = document.getElementById('dice-result-display');
-        const diceResult = document.getElementById('dice-result');
-
-        // --- CORE FUNCTIONS ---
-        const updateBalanceDisplay = () => {
-            balanceDisplay.textContent = `$${balance.toFixed(2)}`;
-            balanceDisplay.style.color = balance < 1000 ? 'var(--accent-red)' : 'var(--accent-green)';
-        };
-
-        const addToHistory = (game, outcome, amount) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span>${game}</span> <span class="${outcome}">${amount}</span>`;
-            gameHistoryList.prepend(li);
-            if (gameHistoryList.children.length > 10) {
-                gameHistoryList.lastChild.remove();
-            }
-        };
-
-        const disableAllGameControls = (disabled) => {
-            isGameRunning = disabled;
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(button => {
-                // Don't disable the cashout button if the game is running
-                if (button.id === 'crash-cashout-btn' && isGameRunning) return;
-                button.disabled = disabled;
-            });
-        };
-
-        // --- COINFLIP LOGIC ---
-        const handleCoinflip = (playerChoice) => {
-            if (isGameRunning) return;
-            const bet = parseFloat(coinflipBetInput.value);
-
-            if (isNaN(bet) || bet <= 0 || bet > balance) {
-                coinflipResult.textContent = 'Invalid bet amount!';
-                return;
-            }
-
-            disableAllGameControls(true);
-            balance -= bet;
-            updateBalanceDisplay();
-            coinflipResult.textContent = 'Flipping...';
-            
-            coinElement.classList.add('flipping');
-            
-            setTimeout(() => {
-                coinElement.classList.remove('flipping');
-                
-                const random = Math.random();
-                const result = random < 0.5 ? 'heads' : 'tails';
-                
-                // Adjust coin's final visual state
-                if (result === 'tails') {
-                    coinElement.style.transform = 'rotateY(180deg)';
-                } else {
-                    coinElement.style.transform = 'rotateY(0deg)';
-                }
-
-                if (playerChoice === result) {
-                    const winnings = bet * 2 * HOUSE_EDGE_MULTIPLIER;
-                    const profit = winnings - bet;
-                    balance += winnings;
-                    coinflipResult.textContent = `You won $${profit.toFixed(2)}!`;
-                    coinflipResult.style.color = 'var(--accent-green)';
-                    addToHistory('Coinflip', 'history-win', `+$${profit.toFixed(2)}`);
-                } else {
-                    coinflipResult.textContent = `You lost $${bet.toFixed(2)}!`;
-                    coinflipResult.style.color = 'var(--accent-red)';
-                    addToHistory('Coinflip', 'history-loss', `-$${bet.toFixed(2)}`);
-                }
-
-                updateBalanceDisplay();
-                disableAllGameControls(false);
-            }, 2000); // Animation duration
-        };
-
-        coinflipHeadsBtn.addEventListener('click', () => handleCoinflip('heads'));
-        coinflipTailsBtn.addEventListener('click', () => handleCoinflip('tails'));
-
-
-        // --- CRASH LOGIC ---
-        let crashInterval;
-        let currentMultiplier;
-        let crashPoint;
-        let crashBetAmount;
-
-        const startCrash = () => {
-            if (isGameRunning) return;
-            crashBetAmount = parseFloat(crashBetInput.value);
-
-            if (isNaN(crashBetAmount) || crashBetAmount <= 0 || crashBetAmount > balance) {
-                crashResult.textContent = 'Invalid bet amount!';
-                return;
-            }
-
-            disableAllGameControls(true);
-            crashStartBtn.disabled = true;
-            crashCashoutBtn.disabled = false;
-            
-            balance -= crashBetAmount;
-            updateBalanceDisplay();
-
-            crashChart.classList.remove('crashed');
-            crashResult.textContent = '';
-            currentMultiplier = 1.00;
-            
-            // Generate a crash point. The logic creates more low multipliers and fewer high ones.
-            crashPoint = Math.max(1, Math.floor(100 / (100 - (Math.random() * 98 + 1))) / 100 * 100);
-
-            crashInterval = setInterval(() => {
-                currentMultiplier += 0.01 + (currentMultiplier * 0.01); // Accelerates slightly
-                crashMultiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
-
-                if (currentMultiplier >= crashPoint) {
-                    endCrash(true); // Crashed
-                }
-            }, 100);
-        };
-
-        const endCrash = (crashed) => {
-            clearInterval(crashInterval);
-            disableAllGameControls(false);
-            crashStartBtn.disabled = false;
-            crashCashoutBtn.disabled = true;
-
-            if (crashed) {
-                crashChart.classList.add('crashed');
-                crashMultiplierDisplay.textContent = `CRASHED @ ${crashPoint.toFixed(2)}x`;
-                crashResult.textContent = `You lost $${crashBetAmount.toFixed(2)}!`;
-                crashResult.style.color = 'var(--accent-red)';
-                addToHistory('Crash', 'history-loss', `-$${crashBetAmount.toFixed(2)}`);
-            } else { // Cashed out successfully
-                const winnings = crashBetAmount * currentMultiplier;
-                const profit = winnings - crashBetAmount;
-                balance += winnings;
-                crashResult.textContent = `Cashed out at ${currentMultiplier.toFixed(2)}x! Won $${profit.toFixed(2)}`;
-                crashResult.style.color = 'var(--accent-green)';
-                addToHistory('Crash', 'history-win', `+$${profit.toFixed(2)}`);
-            }
-            updateBalanceDisplay();
-        };
-
-        crashStartBtn.addEventListener('click', startCrash);
-        crashCashoutBtn.addEventListener('click', () => {
-            if(isGameRunning) endCrash(false);
-        });
-
-        // --- DICE LOGIC ---
-        const updateDiceInfo = () => {
-            const target = parseFloat(diceSlider.value);
-            // Calculate payouts for over and under
-            const payoutOver = (100 / (100 - target)) * HOUSE_EDGE_MULTIPLIER;
-            // Payout under is simpler as it's just the target value
-            const payoutUnder = (100 / target) * HOUSE_EDGE_MULTIPLIER;
-            diceInfo.innerHTML = `Target: ${target.toFixed(2)} | Payout (Over): ${payoutOver.toFixed(2)}x | Payout (Under): ${payoutUnder.toFixed(2)}x`;
-        };
-        
-        const handleDiceRoll = (rollType) => {
-            if(isGameRunning) return;
-            const bet = parseFloat(diceBetInput.value);
-            const target = parseFloat(diceSlider.value);
-
-            if (isNaN(bet) || bet <= 0 || bet > balance) {
-                diceResult.textContent = 'Invalid bet amount!';
-                return;
-            }
-
-            disableAllGameControls(true);
-            balance -= bet;
-            updateBalanceDisplay();
-            diceResult.textContent = "Rolling...";
-
-            const roll = (Math.random() * 100).toFixed(2);
-            diceResultDisplay.textContent = roll;
-            
-            let playerWon = false;
-            if (rollType === 'over' && roll > target) {
-                playerWon = true;
-            } else if (rollType === 'under' && roll < target) {
-                playerWon = true;
-            }
-
-            setTimeout(() => {
-                if (playerWon) {
-                    const payout = rollType === 'over' ? (100 / (100 - target)) * HOUSE_EDGE_MULTIPLIER : (100 / target) * HOUSE_EDGE_MULTIPLIER;
-                    const winnings = bet * payout;
-                    const profit = winnings - bet;
-                    balance += winnings;
-                    diceResult.textContent = `You won $${profit.toFixed(2)}!`;
-                    diceResult.style.color = 'var(--accent-green)';
-                    addToHistory('Dice', 'history-win', `+$${profit.toFixed(2)}`);
-                } else {
-                    diceResult.textContent = `You lost $${bet.toFixed(2)}!`;
-                    diceResult.style.color = 'var(--accent-red)';
-                    addToHistory('Dice', 'history-loss', `-$${bet.toFixed(2)}`);
-                }
-                updateBalanceDisplay();
-                disableAllGameControls(false);
-            }, 1000);
-        };
-        
-        diceSlider.addEventListener('input', updateDiceInfo);
-        diceOverBtn.addEventListener('click', () => handleDiceRoll('over'));
-        diceUnderBtn.addEventListener('click', () => handleDiceRoll('under'));
-
-
-        // --- INITIALIZE ---
-        updateBalanceDisplay();
-        updateDiceInfo();
-    });
-    </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
